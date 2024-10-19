@@ -1,0 +1,141 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff; /* White background */
+    color: #4A0C15; /* Deep red/purple text color */
+    min-height: 100vh; /* Ensure the body covers the full viewport height */
+}
+
+h2 {
+    margin: 20px 0;
+    color: #4A0C15; /* Deep red/purple */
+}
+
+#auth-container, #notes-container, #form-container {
+    width: 90%; /* Use a percentage for responsive width */
+    max-width: 500px; /* Set a max width for larger screens */
+    margin: 20px 0; /* Add vertical spacing */
+    text-align: center; /* Center text */
+    z-index: 2;
+}
+
+#notes-container {
+    width: auto;
+}
+
+textarea {
+    width: calc(100% - 30px);
+    border: 1px solid #4A0C15;
+    border-radius: 4px;
+    padding: 10px;
+    padding-right: 15px;
+    resize: none;
+    height: 1rem; /* Let JavaScript handle height */
+    min-height: 40px; /* Minimum height for one line */
+    font-size: 20px;
+    box-sizing: border-box;
+    overflow: hidden; /* Disable scroll */
+    transition: height 0.2s ease; /* Add smooth transition */
+}
+
+#form-container {
+    transition: height 0.2s; /* Smooth transition for height changes */
+    z-index: 2;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #4A0C15; /* Deep red/purple */
+}
+
+.mood-buttons {
+    display: flex;
+    justify-content: center; /* Center mood buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    margin-top: 10px; /* Add some spacing above */
+}
+
+.mood-button {
+    background-color: #4A0C15; /* Deep red/purple */
+    color: white; /* White text */
+    border: none;
+    border-radius: 15px;
+    padding: 10px 15px;
+    margin: 5px; /* Space between buttons */
+    cursor: pointer;
+    flex: 1 1 80px; /* Allow buttons to grow/shrink and set a base size */
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.15));
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.mood-button:hover {
+    background-color: #333; /* Darken on hover */
+    transform: scale(1.05); /* Slightly enlarge */
+}
+
+.mood-button.selected {
+    filter:saturate(300%);
+    filter: brightness(150%);
+}
+
+button {
+    background-color: white; /* Deep red/purple */
+    color: #4A0C15;
+    border: 2px solid #4A0C15;
+    border-radius: 15px;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.note {
+    background-color: #f9f9f9; /* Light background for notes */
+    border: 1px solid #4A0C15; /* Deep red/purple */
+    border-radius: 15px;
+    padding: 10px;
+    margin: 10px 0; /* Space between notes */
+    width: 100%; /* Full width for notes */
+    box-sizing: border-box; /* Include padding and border */
+    font-size: x-large;
+    z-index: 2;
+    animation: slideInUp 0.5s ease-out;
+}
+
+/* Animation for fading in and sliding up */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px); /* Start slightly below */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0); /* End at the original position */
+    }
+}
+
+#heart-container {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto; /* Prevent blocking clicks on the heart */
+    z-index: 1; /* Set a lower z-index */
+    filter: drop-shadow(0 0 10px rgba(1,1,1,0.15));
+    padding: 100px;
+}
+
+#heart {
+    transition: transform 2s, filter 2s;
+}
+
+.beat {
+    transform: scale(1.15); /* Scale the heart up */
+    filter: drop-shadow(0 0 100px rgb(135, 12, 12)); /* Red glow effect */
+}
+

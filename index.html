@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./styles.css">
+        <title>Love Notes</title>
+    </head>
+    <body>
+        <div id="auth-container" style="display:none">
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            
+            <h2>Sign In</h2>
+            <form id="signin-form">
+                <input type="email" id="signin-email" placeholder="Email" required>
+                <input type="password" id="signin-password" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+
+        <div id="notes-container" class="notes-container"></div>
+        <div id="form-container" class="form-container" style="display:none;">
+            <form id="note-form">
+                <textarea id="note-input" placeholder="Write your note here..." required></textarea>
+                <div class="mood-buttons">
+                    <button type="button" class="mood-button" data-mood="happy" style="background-color:rgb(226, 211, 96); color: black;">Happy</button>
+                    <button type="button" class="mood-button" data-mood="sad" style="background-color: rgb(36, 36, 108);">Sad</button>
+                    <button type="button" class="mood-button" data-mood="excited" style="background-color: rgb(255, 151, 31);">Excited</button>
+                    <button type="button" class="mood-button" data-mood="romantic" style="background-color: rgb(133, 29, 29);">Romantic</button>
+                    <button type="button" class="mood-button" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);">Thoughtful</button>
+                </div>
+                <button type="submit">Send Note</button>
+            </form>
+        </div>
+        <div id="heart-container" style="display: none;">
+            <svg id="heart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="600" height="600" style="fill: white; cursor: pointer;">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        </div>
+    
+        <!-- Firebase SDK -->
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+            import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+            import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+            
+            const firebaseConfig = {
+                apiKey: "AIzaSyDRQ1Wu8dnHbVzJtRx_MfsxRaU5yZAYMnM",
+                authDomain: "lovenoteswebsite.firebaseapp.com",
+                projectId: "lovenoteswebsite",
+                storageBucket: "lovenoteswebsite.appspot.com",
+                messagingSenderId: "105997806469",
+                appId: "1:105997806469:web:4f466a42c74355db49b2ec",
+                measurementId: "G-W252Q65Z4D"
+            };
+        
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app); // Initialize Firebase Auth
+        
+            let notes = [];
+            let currentIndex = 0;
+            let selectedMood = ""; // Store the selected mood
+        
+            // Check if a user is signed in
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in
+                    document.getElementById("auth-container").style.display = "none"; // Hide auth section
+                    document.getElementById("notes-container").style.display = "block"; // Show notes container
+                    getNotes(); // Fetch notes for the signed-in user
+                } else {
+                    // No user is signed in
+                    document.getElementById("auth-container").style.display = "block"; // Show auth section
+                    document.getElementById("notes-container").style.display = "none"; // Hide notes container
+                }
+            });
+        
+            document.querySelectorAll('.mood-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    selectedMood = button.getAttribute('data-mood');
+                    document.querySelectorAll('.mood-button').forEach(b => b.classList.remove('selected'));
+                    button.classList.add('selected'); // Highlight selected mood
+                });
+            });
+        
+            document.getElementById("note-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const note = document.getElementById("note-input").value;
+        
+                await addDoc(collection(db, "notes"), {
+                    content: note,
+                    mood: selectedMood,
+                    timestamp: new Date(),
+                    sender: auth.currentUser.uid,
+                    read: false // Add a read flag
+                });
+        
+                document.getElementById("note-input").value = ""; // Clear input
+                selectedMood = ""; // Reset mood selection
+                getNotes(); // Refresh the notes displayed
+            });
+        
+            // Sign up function
+            async function signUp(email, password) {
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    console.log("User signed up and signed in:", user.uid);
+                    // Automatically signed in
+                } catch (error) {
+                    console.error("Error signing up:", error);
+                }
+            }
+        
+            // Sign in function
+            async function signIn(email, password) {
+                try {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    console.log("User signed in:", user.uid);
+                } catch (error) {
+                    console.error("Error signing in:", error);
+                }
+            }
+        
+            async function getNotes() {
+                const querySnapshot = await getDocs(collection(db, "notes"));
+                notes = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.sender !== auth.currentUser.uid && !data.read) { // Only show unread notes from the other user
+                        notes.push({ id: doc.id, ...data }); // Include the document ID for updating later
+                    }
+                });
+
+                // Show new notes if any
+                if (notes.length > 0) {
+                    showNextNote();
+                } else {
+                    document.getElementById("notes-container").style.display = "none";
+                    document.getElementById("form-container").style.display = "block"; // Show form if no notes
+                }
+            }
+        
+            function showNextNote() {
+                if (currentIndex < notes.length) {
+                    const note = notes[currentIndex];
+                    const noteElement = document.createElement("div");
+                    noteElement.classList.add("note");
+                    // noteElement.textContent = `Mood: ${note.mood} - Note: ${note.content}`;
+                    noteElement.textContent = `${note.content}`;
+                    document.getElementById("notes-container").innerHTML = ""; // Clear previous note
+                    document.getElementById("notes-container").appendChild(noteElement);
+
+                    // Add click event to the whole document to proceed to the next note
+                    document.addEventListener("click", () => {
+                        markAsRead(note.id); // Mark the note as read
+                        handleNextNoteClick();
+                    });
+                }
+            }
+
+            async function markAsRead(noteId) {
+                const noteRef = doc(db, "notes", noteId);
+                await updateDoc(noteRef, { read: true });
+            }
+        
+            function handleNextNoteClick() {
+                currentIndex++;
+                document.removeEventListener("click", handleNextNoteClick); // Remove event listener to avoid multiple triggers
+        
+                if (currentIndex < notes.length) {
+                    showNextNote(); // Show next note
+                } else {
+                    document.getElementById("notes-container").style.display = "none";
+                    document.getElementById("form-container").style.display = "block"; // Show form to send a new note
+                    document.getElementById("notes-container").innerHTML = ""; // Clear notes container
+                }
+            }
+        
+            document.getElementById("signup-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const email = document.getElementById("signup-email").value;
+                const password = document.getElementById("signup-password").value;
+                await signUp(email, password);
+            });
+        
+            document.getElementById("signin-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const email = document.getElementById("signin-email").value;
+                const password = document.getElementById("signin-password").value;
+                await signIn(email, password);
+            });
+
+            const noteInput = document.getElementById("note-input");
+
+            noteInput.addEventListener("input", () => {
+                noteInput.style.height = "auto"; // Reset height to auto to measure scrollHeight
+                noteInput.style.height = `${noteInput.scrollHeight}px`; // Set height to scrollHeight
+            });
+
+            // Assume you're already set up with Firebase
+
+            // // Function to send a heart
+            // async function sendHeart() {
+            //     await addDoc(collection(db, "hearts"), {
+            //         sender: auth.currentUser.uid,
+            //         timestamp: new Date(),
+            //     });
+            // }
+
+            // // Listener for heart taps
+            // document.addEventListener("click", sendHeart);
+
+            // async function markHeartAsShown(heartId) {
+            //     const heartRef = doc(db, "hearts", heartId);
+            //     await updateDoc(heartRef, { shown: true });
+            // }
+
+            // onSnapshot(collection(db, "hearts"), (snapshot) => {
+            //     snapshot.docChanges().forEach(async (change) => {
+            //         if (change.type === "added") {
+            //             const heartData = change.doc.data();
+            //             if (!heartData.shown) { // Check if the heart has been shown
+            //                 displayHeart(heartData.sender);
+            //                 await markHeartAsShown(change.doc.id); // Mark as shown
+            //             }
+            //         }
+            //     });
+            // });
+
+            // // Function to display heart on the screen
+            // function displayHeart(senderId) {
+            //     const heartElement = document.createElement("div");
+            //     heartElement.classList.add("heart");
+            //     heartElement.textContent = "❤️"; // Heart icon
+            //     document.body.appendChild(heartElement);
+                
+            //     // Position the heart at the click location
+            //     heartElement.style.position = "absolute";
+            //     heartElement.style.left = `${Math.random() * window.innerWidth}px`;
+            //     heartElement.style.top = `${Math.random() * window.innerHeight}px`;
+                
+            //     // Animate the heart (e.g., float up and fade out)
+            //     heartElement.animate([{ transform: "translateY(0)" }, { transform: "translateY(-50px)", opacity: 0 }], {
+            //         duration: 2000,
+            //         fill: "forwards"
+            //     });
+
+            //     // Remove heart from DOM after animation
+            //     setTimeout(() => {
+            //         heartElement.remove();
+            //     }, 2000);
+            // }
+
+            // Add this function to send heartbeats to Firestore
+            async function sendHeartbeat() {
+                if (auth.currentUser) {
+                    await addDoc(collection(db, "heartbeats"), {
+                        sender: auth.currentUser.uid,
+                        timestamp: new Date(),
+                    });
+                }
+            }
+
+            let isAnimating = false; // Flag to track animation state
+
+            // Reusable function to visually display the heartbeat
+            function displayHeartbeat() {
+                const heart = document.getElementById("heart");
+
+                if (!isAnimating) { // Only allow click if not animating
+                    isAnimating = true; // Set the flag to true
+                    heart.classList.add("beat"); // Trigger the beat animation
+
+                    setTimeout(() => {
+                        heart.classList.remove("beat"); // Remove the class after the animation
+                        isAnimating = false; // Reset the flag after animation is done
+                    }, 500); // Adjust timing based on your animation duration
+                }
+            }
+
+        // Click event for the heart
+        document.getElementById("heart").addEventListener("click", async (e) => {
+            {
+                displayHeartbeat(); // Trigger heartbeat animation
+                await sendHeartbeat(); // Send the heartbeat to Firestore
+            }
+        });
+
+        // Function to listen for heartbeats from Firestore
+        function listenForHeartbeats() {
+            const heartbeatsRef = collection(db, "heartbeats");
+            
+            onSnapshot(heartbeatsRef, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const heartbeat = change.doc.data();
+                        
+                        // Check if the heartbeat is from the other user
+                        if (heartbeat.sender !== auth.currentUser.uid) {
+                            displayHeartbeat(); // Show the heartbeat from the other user
+                        }
+                    }
+                });
+            });
+        }
+
+            // Call this function on load
+            listenForHeartbeats();
+
+            async function cleanupOldHeartbeats() {
+                const heartbeatsRef = collection(db, "heartbeats");
+                const querySnapshot = await getDocs(heartbeatsRef);
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const timestamp = data.timestamp.toDate();
+                    const now = new Date();
+                    const fiveSecondsAgo = new Date(now - 5000);
+
+                    if (timestamp < fiveSecondsAgo) {
+                        // Delete old heartbeats
+                        deleteDoc(doc.ref);
+                    }
+                });
+            }
+
+            // Call this function on load to clean up old heartbeats
+            cleanupOldHeartbeats();
+
+
+            // Optional: Display the heart container based on some condition (like a user action)
+            document.getElementById("heart-container").style.display = "flex"; // Show the heart
+        </script>
+        
+    </body>
+    </html>
