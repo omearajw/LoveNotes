@@ -28,16 +28,16 @@
             <form id="note-form">
                 <textarea id="note-input" placeholder="Write your note here..." required></textarea>
                 <div class="mood-buttons">
-                    <button type="button" class="mood-button" data-mood="happy" style="background-color:rgb(226, 211, 96); color: black;">Happy</button>
-                    <button type="button" class="mood-button" data-mood="sad" style="background-color: rgb(36, 36, 108);">Sad</button>
-                    <button type="button" class="mood-button" data-mood="excited" style="background-color: rgb(255, 151, 31);">Excited</button>
-                    <button type="button" class="mood-button" data-mood="romantic" style="background-color: rgb(133, 29, 29);">Romantic</button>
-                    <button type="button" class="mood-button" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);">Thoughtful</button>
+                    <button type="button" class="mood-button no-select" data-mood="happy" style="background-color:rgb(226, 211, 96); color: black;">Happy</button>
+                    <button type="button" class="mood-button no-select" data-mood="sad" style="background-color: rgb(36, 36, 108);">Sad</button>
+                    <button type="button" class="mood-button no-select" data-mood="excited" style="background-color: rgb(255, 151, 31);">Excited</button>
+                    <button type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(133, 29, 29);">Romantic</button>
+                    <button type="button" class="mood-button no-select" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);">Thoughtful</button>
                 </div>
                 <button type="submit">Send Note</button>
             </form>
         </div>
-        <div id="heart-container" style="display: none;">
+        <div id="heart-container" class="no-select" style="display: none;">
             <svg id="heart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="600" height="600" style="fill: white; cursor: pointer;">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
