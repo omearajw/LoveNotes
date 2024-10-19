@@ -295,10 +295,6 @@
 
             // Reusable function to visually display the heartbeat
             function displayHeartbeat() {
-                // Trigger vibration for 200 milliseconds
-                if (navigator.vibrate) {
-                    navigator.vibrate(200);
-                }
                 const heart = document.getElementById("heart");
 
                 if (!isAnimating) { // Only allow click if not animating
