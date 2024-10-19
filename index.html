@@ -30,11 +30,12 @@
             <form id="note-form">
                 <textarea id="note-input" placeholder="Write your note here..." required></textarea>
                 <div class="mood-buttons no-select">
-                    <button type="button" class="mood-button no-select" data-mood="happy" style="background-color:rgb(226, 211, 96); color: black;">Happy</button>
-                    <button type="button" class="mood-button no-select" data-mood="sad" style="background-color: rgb(36, 36, 108);">Sad</button>
-                    <button type="button" class="mood-button no-select" data-mood="excited" style="background-color: rgb(255, 151, 31);">Excited</button>
-                    <button type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(133, 29, 29);">Romantic</button>
-                    <button type="button" class="mood-button no-select" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);">Thoughtful</button>
+                    <button type="button" class="mood-button no-select" data-mood="happy" style="background-color:rgb(226, 211, 96); color: black;"><p class="mood-button-text">😊</p></button>
+                    <button type="button" class="mood-button no-select" data-mood="sad" style="background-color: rgb(36, 36, 108);"><p class="mood-button-text">😔</p></button>
+                    <button type="button" class="mood-button no-select" data-mood="excited" style="background-color: rgb(255, 151, 31);"><p class="mood-button-text">😁</p></button>
+                    <button type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(133, 29, 29);"><p class="mood-button-text">😍</p></button>
+                    <button type="button" class="mood-button no-select" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);"><p class="mood-button-text">🤔</p></button>
+                    <button type="button" class="mood-button no-select" data-mood="hot" style="background-color: rgb(89, 15, 15);"><p class="mood-button-text">😏</p></button>
                 </div>
                 <button id="send-button" type="submit">Send Note</button>
             </form>
@@ -229,6 +230,7 @@
                 excited: "linear-gradient(to top, #ff7e5f, #feb47b)", // Coral to peach
                 romantic: "linear-gradient(to top, #ff6a6a, #f8c471)", // Red to light orange
                 thoughtful: "linear-gradient(to top, #6a5acd, #d1c4e9)", // Slate blue to light lavender
+                hot: "linear-gradient(to top, #750e0e, #800832)", // Slate blue to light lavender
                 default: "linear-gradient(to top, #f0f0f0, #d0d0d0)" // Light gray gradient
             };
 

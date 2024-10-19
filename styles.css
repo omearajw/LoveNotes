@@ -91,16 +91,17 @@ textarea:focus {
 }
 
 .mood-button {
-    background-color: #4A0C15; /* Deep red/purple */
+     background-color: #4A0C15;/*  Deep red/purple */
     color: white; /* White text */
     border: none;
-    border-radius: 15px;
-    padding: 10px 15px;
+    border-radius: 1000px;
+    padding: 0px;
     margin: 5px; /* Space between buttons */
     cursor: pointer;
-    flex: 1 1 80px; /* Allow buttons to grow/shrink and set a base size */
+    flex: 0 0 0px; /* Allow buttons to grow/shrink and set a base size */
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.15));
     transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 65px;
 }
 
 .mood-button:hover {
@@ -111,6 +112,12 @@ textarea:focus {
 .mood-button.selected {
     filter:saturate(300%);
     filter: brightness(150%);
+}
+
+.mood-button-text {
+    margin: 0px;
+    padding-bottom: 7px;
+    align-self: center;
 }
 
 button {
@@ -190,22 +197,32 @@ button {
 
 .note.happy {
     border: 5px solid rgb(226, 211, 96);
+    filter: drop-shadow(0 0 10px rgba(226, 211, 96, 1));
 }
 
 .note.sad {
     border: 5px solid rgb(36, 36, 108);
+    filter: drop-shadow(0 0 10px rgba(36, 36, 108, 1));
 }
 
 .note.excited {
     border: 5px solid rgb(255, 151, 31);
+    filter: drop-shadow(0 0 10px rgba(255, 151, 31, 1));
 }
  
 .note.romantic {
-    border: 5px solid rgb(133, 29, 29);
+    border: 5px solid rgb(166, 0, 0);
+    filter: drop-shadow(0 0 10px rgba(166, 0, 0, 1));
 }
 
 .note.thoughtful {
-    border: 5px solid rgb(112, 19, 112);;
+    border: 5px solid rgb(112, 19, 112);
+    filter: drop-shadow(0 0 10px rgba(112, 19, 112, 1));
+}
+
+.note.hot {
+    border: 5px solid rgb(97, 15, 15);
+    filter: drop-shadow(0 0 10px rgba(97, 15, 15, 1));
 }
 
 #heart-container {
