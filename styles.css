@@ -168,6 +168,10 @@ button {
     user-select: none;
 }
 
+#heart:focus, #heart-container:focus {
+    outline: none !important;
+}
+
 .shrink {
     transform: scale(0.9); /* Scale down the heart slightly */
 }
