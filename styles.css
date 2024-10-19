@@ -148,6 +148,13 @@ button {
     z-index: 1; /* Set a lower z-index */
     filter: drop-shadow(0 0 10px rgba(1,1,1,0.15));
     padding: 100px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #heart {
