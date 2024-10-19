@@ -147,14 +147,36 @@
                     document.getElementById("form-container").style.display = "block"; // Show form if no notes
                 }
             }
-        
+
             function showNextNote() {
                 if (currentIndex < notes.length) {
                     const note = notes[currentIndex];
                     const noteElement = document.createElement("div");
-                    noteElement.classList.add("note");
-                    // noteElement.textContent = `Mood: ${note.mood} - Note: ${note.content}`;
-                    noteElement.textContent = `${note.content}`;
+                    noteElement.classList.add("note"); // Base class for the note
+
+                    // Assign a class based on the mood
+                    switch(note.mood) {
+                        case "happy":
+                            noteElement.classList.add("happy");
+                            break;
+                        case "sad":
+                            noteElement.classList.add("sad");
+                            break;
+                        case "excited":
+                            noteElement.classList.add("excited");
+                            break;
+                        case "romantic":
+                            noteElement.classList.add("romantic");
+                            break;
+                        case "thoughtful":
+                            noteElement.classList.add("thoughtful");
+                            break;
+                        default:
+                            // Optional: Add a default class if mood is unknown
+                            noteElement.classList.add("default");
+                    }
+
+                    noteElement.textContent = `${note.content}`; // Set the note content
                     document.getElementById("notes-container").innerHTML = ""; // Clear previous note
                     document.getElementById("notes-container").appendChild(noteElement);
 
@@ -286,31 +308,39 @@
                 }
             }
 
-        // Click event for the heart
-        document.getElementById("heart").addEventListener("click", async (e) => {
-            {
-                displayHeartbeat(); // Trigger heartbeat animation
-                await sendHeartbeat(); // Send the heartbeat to Firestore
-            }
-        });
-
-        // Function to listen for heartbeats from Firestore
-        function listenForHeartbeats() {
-            const heartbeatsRef = collection(db, "heartbeats");
-            
-            onSnapshot(heartbeatsRef, (snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        const heartbeat = change.doc.data();
-                        
-                        // Check if the heartbeat is from the other user
-                        if (heartbeat.sender !== auth.currentUser.uid) {
-                            displayHeartbeat(); // Show the heartbeat from the other user
-                        }
-                    }
-                });
+            // Click event for the heart
+            document.getElementById("heart").addEventListener("touchstart", async (e) => {
+                {
+                    document.getElementById("heart").classList.add("shrink");
+                }
             });
-        }
+
+            // Click event for the heart
+            document.getElementById("heart").addEventListener("touchend", async (e) => {
+                {
+                    document.getElementById("heart").classList.remove("shrink");
+                    displayHeartbeat(); // Trigger heartbeat animation
+                    await sendHeartbeat(); // Send the heartbeat to Firestore
+                }
+            });
+
+            // Function to listen for heartbeats from Firestore
+            function listenForHeartbeats() {
+                const heartbeatsRef = collection(db, "heartbeats");
+                
+                onSnapshot(heartbeatsRef, (snapshot) => {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            const heartbeat = change.doc.data();
+                            
+                            // Check if the heartbeat is from the other user
+                            if (heartbeat.sender !== auth.currentUser.uid) {
+                                displayHeartbeat(); // Show the heartbeat from the other user
+                            }
+                        }
+                    });
+                });
+            }
 
             // Call this function on load
             listenForHeartbeats();

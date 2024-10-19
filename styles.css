@@ -119,6 +119,26 @@ button {
     }
 }
 
+.note.happy {
+    border: 10px solid rgb(226, 211, 96);
+}
+
+.note.sad {
+    border: 10px solid rgb(36, 36, 108);
+}
+
+.note.excited {
+    border: 10px solid rgb(255, 151, 31);
+}
+ 
+.note.romantic {
+    border: 10px solid rgb(133, 29, 29);
+}
+
+.note.thoughtful {
+    border: 10px solid rgb(112, 19, 112);;
+}
+
 #heart-container {
     position: fixed;
     display: flex;
@@ -132,6 +152,11 @@ button {
 
 #heart {
     transition: transform 2s, filter 2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.shrink {
+    transform: scale(0.9); /* Scale down the heart slightly */
 }
 
 .beat {
