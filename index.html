@@ -36,7 +36,7 @@
                     <button type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(133, 29, 29);">Romantic</button>
                     <button type="button" class="mood-button no-select" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);">Thoughtful</button>
                 </div>
-                <button type="submit">Send Note</button>
+                <button id="send-button" type="submit">Send Note</button>
             </form>
         </div>
         <div id="heart-container" class="no-select" style="display: none;">
@@ -94,20 +94,78 @@
         
             document.getElementById("note-form").addEventListener("submit", async (e) => {
                 e.preventDefault();
-                const note = document.getElementById("note-input").value;
-        
-                await addDoc(collection(db, "notes"), {
-                    content: note,
-                    mood: selectedMood,
-                    timestamp: new Date(),
-                    sender: auth.currentUser.uid,
-                    read: false // Add a read flag
-                });
-        
-                document.getElementById("note-input").value = ""; // Clear input
-                selectedMood = ""; // Reset mood selection
-                getNotes(); // Refresh the notes displayed
+                
+                const noteInput = document.getElementById("note-input");
+                const moodButtons = document.querySelectorAll(".mood-button"); // Ensure your mood buttons have this class
+                const sendButton = document.getElementById("send-button");
+
+                if (!noteInput || !sendButton || moodButtons.length === 0) {
+                    console.error("One or more required elements are missing from the DOM.");
+                    return;
+                }
+
+                const note = noteInput.value;
+                if (!note || !selectedMood) {
+                    console.warn("Note or mood is missing.");
+                    return; // Ensure note and mood are provided before submitting
+                }
+
+                // Disable input and buttons during the animation
+                noteInput.disabled = true;
+                sendButton.disabled = true;
+                moodButtons.forEach(button => button.disabled = true);
+
+                // Trigger fade-out animation for mood buttons and send button
+                moodButtons.forEach(button => console.log(button));
+                moodButtons.forEach(button => button.classList.add("fade-out"));
+                sendButton.classList.add("fade-out");
+
+                // Trigger slide-up animation for the note input
+                noteInput.classList.add("slide-up");
+
+                // Simulate sending the note after animations play
+                setTimeout(async () => {
+                    // Send the note to Firestore
+                    await addDoc(collection(db, "notes"), {
+                        content: note,
+                        mood: selectedMood,
+                        timestamp: new Date(),
+                        sender: auth.currentUser.uid,
+                        read: false // Add a read flag
+                    });
+
+                    // Clear the input and reset mood selection
+                    noteInput.value = "";
+                    selectedMood = "";
+
+                    // Wait for a second, then bring back the buttons with fade-in effect
+                    setTimeout(() => {
+                        // Reset slide-up animation for the input
+                        noteInput.classList.remove("slide-up");
+                        noteInput.classList.add("slide-up-reset"); // Optional reset for smooth transition
+
+                        // Fade-in mood buttons and send button
+                        moodButtons.forEach(button => {
+                            button.classList.remove("fade-out");
+                            button.classList.add("fade-in");
+                        });
+                        sendButton.classList.remove("fade-out");
+                        sendButton.classList.add("fade-in");
+
+                        // Re-enable form interactions
+                        noteInput.disabled = false;
+                        sendButton.disabled = false;
+                        moodButtons.forEach(button => button.disabled = false);
+                    }, 1000); // Match this delay to the fade-in transition duration
+
+                    // Refresh the notes displayed
+                    getNotes();
+
+                }, 1000); // Delay to allow the fade-out and slide-up animations to complete
             });
+
+
+
         
             // Sign up function
             async function signUp(email, password) {
