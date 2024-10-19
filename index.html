@@ -33,7 +33,7 @@
                     <button type="button" class="mood-button no-select" data-mood="happy" style="background-color:rgb(226, 211, 96); color: black;"><p class="mood-button-text">😊</p></button>
                     <button type="button" class="mood-button no-select" data-mood="sad" style="background-color: rgb(36, 36, 108);"><p class="mood-button-text">😔</p></button>
                     <button type="button" class="mood-button no-select" data-mood="excited" style="background-color: rgb(255, 151, 31);"><p class="mood-button-text">😁</p></button>
-                    <button type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(133, 29, 29);"><p class="mood-button-text">😍</p></button>
+                    <button type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(164, 41, 100);"><p class="mood-button-text">😍</p></button>
                     <button type="button" class="mood-button no-select" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);"><p class="mood-button-text">🤔</p></button>
                     <button type="button" class="mood-button no-select" data-mood="hot" style="background-color: rgb(89, 15, 15);"><p class="mood-button-text">😏</p></button>
                 </div>
@@ -118,10 +118,13 @@
 
                 // Trigger fade-out animation for mood buttons and send button
                 moodButtons.forEach(button => console.log(button));
+                moodButtons.forEach(button => button.classList.remove("fade-in"));
                 moodButtons.forEach(button => button.classList.add("fade-out"));
+                sendButton.classList.remove("fade-in");
                 sendButton.classList.add("fade-out");
 
                 // Trigger slide-up animation for the note input
+                noteInput.classList.remove("slide-up-reset");
                 noteInput.classList.add("slide-up");
 
                 // Simulate sending the note after animations play
@@ -228,9 +231,9 @@
                 happy: "linear-gradient(to top, #ffec61, #ffb74d)", // Yellow to light orange
                 sad: "linear-gradient(to top, #4a90e2, #a3c4e3)", // Blue to light blue
                 excited: "linear-gradient(to top, #ff7e5f, #feb47b)", // Coral to peach
-                romantic: "linear-gradient(to top, #ff6a6a, #f8c471)", // Red to light orange
+                romantic: "linear-gradient(to top, #FF69B4, #c23c32)", // Pink to red
                 thoughtful: "linear-gradient(to top, #6a5acd, #d1c4e9)", // Slate blue to light lavender
-                hot: "linear-gradient(to top, #750e0e, #800832)", // Slate blue to light lavender
+                hot: "linear-gradient(to top, #750e0e, #800832)", // Red to purpley red
                 default: "linear-gradient(to top, #f0f0f0, #d0d0d0)" // Light gray gradient
             };
 
