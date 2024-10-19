@@ -7,6 +7,8 @@
         <title>Love Notes</title>
     </head>
     <body>
+        <div id="gradient-overlay" class="gradient-overlay"></div>
+
         <div id="auth-container" style="display:none">
             <h2>Sign Up</h2>
             <form id="signup-form">
@@ -73,6 +75,7 @@
                     // User is signed in
                     document.getElementById("auth-container").style.display = "none"; // Hide auth section
                     document.getElementById("notes-container").style.display = "block"; // Show notes container
+                    showContainer(document.getElementById("notes-container"))
                     getNotes(); // Fetch notes for the signed-in user
                 } else {
                     // No user is signed in
@@ -139,20 +142,61 @@
                     }
                 });
 
+                    // Sort notes by timestamp in ascending order (oldest first)
+                notes.sort((a, b) => {
+                    return a.timestamp.toMillis() - b.timestamp.toMillis(); // Assuming timestamp is a Firestore Timestamp
+                });
+
                 // Show new notes if any
                 if (notes.length > 0) {
                     showNextNote();
                 } else {
                     document.getElementById("notes-container").style.display = "none";
+                    showHeart();
                     document.getElementById("form-container").style.display = "block"; // Show form if no notes
+                    showContainer(document.getElementById("form-container"));
                 }
             }
+
+            function showContainer(container) {
+                container.style.display = "block"; // Ensure it is visible
+                setTimeout(() => {
+                    container.classList.add("show-container"); // Add the class after display is set
+                }, 10); // Slight delay to ensure display change applies first
+            }
+
+            const moodGradients = {
+                happy: "linear-gradient(to top, #ffec61, #ffb74d)", // Yellow to light orange
+                sad: "linear-gradient(to top, #4a90e2, #a3c4e3)", // Blue to light blue
+                excited: "linear-gradient(to top, #ff7e5f, #feb47b)", // Coral to peach
+                romantic: "linear-gradient(to top, #ff6a6a, #f8c471)", // Red to light orange
+                thoughtful: "linear-gradient(to top, #6a5acd, #d1c4e9)", // Slate blue to light lavender
+                default: "linear-gradient(to top, #f0f0f0, #d0d0d0)" // Light gray gradient
+            };
+
+            const defaultGradient = "linear-gradient(to right, #ffffff, #f0f0f0)"; // Replace with your normal background gradient
+
 
             function showNextNote() {
                 if (currentIndex < notes.length) {
                     const note = notes[currentIndex];
                     const noteElement = document.createElement("div");
                     noteElement.classList.add("note"); // Base class for the note
+
+                    // Get the gradient based on the note's mood
+                    const gradient = moodGradients[note.mood] || moodGradients.default; // Use default if mood is unknown
+                    
+                    // Get the gradient overlay element
+                    const gradientOverlay = document.getElementById("gradient-overlay");
+
+                    // Fade out the current gradient
+                    gradientOverlay.style.opacity = 0;
+
+                    // Wait for the fade-out transition to finish before changing the background
+                    setTimeout(() => {
+                        gradientOverlay.style.background = gradient; // Change the gradient
+                        gradientOverlay.style.opacity = 1; // Fade in the new gradient
+                    }, 1000); // Match this to the fade-out duration
 
                     // Assign a class based on the mood
                     switch(note.mood) {
@@ -181,11 +225,20 @@
                     document.getElementById("notes-container").appendChild(noteElement);
 
                     // Add click event to the whole document to proceed to the next note
-                    document.addEventListener("click", () => {
-                        markAsRead(note.id); // Mark the note as read
-                        handleNextNoteClick();
+                    noteElement.addEventListener("click", () => {
+                        handleNoteClick(noteElement, note.id);
                     });
                 }
+            }
+
+            function handleNoteClick(noteElement, noteId) {
+                noteElement.style.animation = 'slideOutUp 2s ease-out'; // Apply the slide out animation
+
+                // Remove the note from the DOM after the animation completes
+                noteElement.addEventListener('animationend', () => {
+                    markAsRead(noteId); // Mark the note as read after fade out
+                    handleNextNoteClick(); // Show next note
+                });
             }
 
             async function markAsRead(noteId) {
@@ -200,8 +253,18 @@
                 if (currentIndex < notes.length) {
                     showNextNote(); // Show next note
                 } else {
+                    // After all notes are shown, reset the gradient overlay to the default
+                    const gradientOverlay = document.getElementById("gradient-overlay");
+                    gradientOverlay.style.opacity = 0; // Fade out the overlay
+                    setTimeout(() => {
+                        gradientOverlay.style.background = defaultGradient; // Set back to default gradient
+                        gradientOverlay.style.opacity = 1; // Fade in the default gradient
+                    }, 1000); // Match this to the fade-out duration
+
                     document.getElementById("notes-container").style.display = "none";
+                    showHeart();
                     document.getElementById("form-container").style.display = "block"; // Show form to send a new note
+                    showContainer(document.getElementById("form-container"));
                     document.getElementById("notes-container").innerHTML = ""; // Clear notes container
                 }
             }
@@ -280,6 +343,12 @@
             //         heartElement.remove();
             //     }, 2000);
             // }
+
+            // Function to show the heart when notes are displayed
+            function showHeart() {
+                const heartContainer = document.getElementById('heart-container');
+                heartContainer.classList.add('show-heart');
+            }
 
             // Add this function to send heartbeats to Firestore
             async function sendHeartbeat() {

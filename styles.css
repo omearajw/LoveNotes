@@ -10,8 +10,20 @@ body {
     align-items: center;
     background-color: #ffffff; /* White background */
     color: #4A0C15; /* Deep red/purple text color */
-    min-height: 100vh; /* Ensure the body covers the full viewport height */
+    min-height: 100vh;
 }
+
+.gradient-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* Start hidden */
+    transition: opacity 1s ease-in-out; /* Transition for fading */
+    z-index: 1; /* Set below the content but above the body background */
+}
+
 
 h2 {
     margin: 20px 0;
@@ -24,6 +36,22 @@ h2 {
     margin: 20px 0; /* Add vertical spacing */
     text-align: center; /* Center text */
     z-index: 2;
+    opacity: 0;
+}
+
+/* Fade-in animation keyframes */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Class to apply the fade-in animation */
+.show-container {
+    animation: fadeIn 2s ease-in-out forwards; /* Apply the fade-in animation */
 }
 
 #notes-container {
@@ -106,7 +134,8 @@ button {
     box-sizing: border-box; /* Include padding and border */
     font-size: x-large;
     z-index: 2;
-    animation: slideInUp 0.5s ease-out;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+    animation: slideInUp 2s ease-out;
 }
 
 /* Animation for fading in and sliding up */
@@ -121,24 +150,36 @@ button {
     }
 }
 
+/* Animation for fading in and sliding up */
+@keyframes slideOutUp {
+    from {
+        opacity: 1;
+        transform: translateY(0); /* Start slightly below */
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px); /* End at the original position */
+    }
+}
+
 .note.happy {
-    border: 10px solid rgb(226, 211, 96);
+    border: 5px solid rgb(226, 211, 96);
 }
 
 .note.sad {
-    border: 10px solid rgb(36, 36, 108);
+    border: 5px solid rgb(36, 36, 108);
 }
 
 .note.excited {
-    border: 10px solid rgb(255, 151, 31);
+    border: 5px solid rgb(255, 151, 31);
 }
  
 .note.romantic {
-    border: 10px solid rgb(133, 29, 29);
+    border: 5px solid rgb(133, 29, 29);
 }
 
 .note.thoughtful {
-    border: 10px solid rgb(112, 19, 112);;
+    border: 5px solid rgb(112, 19, 112);;
 }
 
 #heart-container {
@@ -153,7 +194,12 @@ button {
 }
 
 #heart {
-    transition: transform 2s, filter 2s;
+    opacity: 0;
+    transition: transform 2s, filter 2s, opacity 2s ease-in;
+}
+
+.show-heart #heart {
+    opacity: 1;
 }
 
 .no-select{
