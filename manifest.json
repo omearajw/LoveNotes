@@ -3,7 +3,7 @@
     "short_name": "Love Notes",
     "description": "A cute way to send love notes",
     "scope": "/LovesNotes/",
-    "start_url": "/LoveNotes/",
+    "start_url": "/LoveNotes/index.html",
     "display": "standalone",
     "background_color": "#FFFFFF",
     "theme_color": "#FFFFFF",
