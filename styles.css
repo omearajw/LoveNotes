@@ -63,7 +63,7 @@ h2 {
     margin: 20px 0; /* Add vertical spacing */
     text-align: center; /* Center text */
     z-index: 2;
-    opacity: 1;
+    opacity: 0;
 }
 
 /* Fade-in animation keyframes */
@@ -83,6 +83,10 @@ h2 {
 
 #notes-container {
     width: auto;
+}
+
+#auth-container {
+    opacity: 1;
 }
 
 textarea {
