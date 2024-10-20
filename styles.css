@@ -106,12 +106,14 @@ textarea:focus {
 
 .mood-button:hover {
     background-color: #333; /* Darken on hover */
-    transform: scale(1.05); /* Slightly enlarge */
+    filter:saturate(80%);
+    filter: brightness(80%);
 }
 
 .mood-button.selected {
     filter:saturate(300%);
-    filter: brightness(150%);
+    filter: brightness(125%);
+    transform: scale(1.05); /* Slightly enlarge */
 }
 
 .mood-button-text {
