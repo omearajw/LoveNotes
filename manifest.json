@@ -8,25 +8,25 @@
     "theme_color": "#B0171F",
     "icons": [
       {
-        "src": "/icons/icon128.png",
+        "src": "./icons/icon128.png",
         "sizes": "128x128",
         "type": "image/png"
       },
       {
-        "src": "/icons/icon512.png",
+        "src": "./icons/icon512.png",
         "sizes": "512x512",
         "type": "image/png"
       }
     ],
     "screenshots": [
       {
-        "src": "/screenshots/screenshot-1.png",
+        "src": "./screenshots/screenshot-1.png",
         "sizes": "540x960",
         "type": "image/png",
         "form_factor": "narrow" 
       },
       {
-        "src": "/screenshots/screenshot-2.png",
+        "src": "./screenshots/screenshot-2.png",
         "sizes": "540x960",
         "type": "image/png",
         "form_factor": "narrow"
