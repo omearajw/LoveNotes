@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./styles.css">
+        <link rel="manifest" href="/manifest.json">
         <title>Love Notes</title>
     </head>
     <body>
@@ -69,6 +70,18 @@
             let notes = [];
             let currentIndex = 0;
             let selectedMood = ""; // Store the selected mood
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    }, (err) => {
+                        console.log('Service Worker registration failed:', err);
+                    });
+                });
+            }
+
         
             // Check if a user is signed in
             onAuthStateChanged(auth, (user) => {

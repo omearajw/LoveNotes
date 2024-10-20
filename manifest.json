@@ -1,0 +1,13 @@
+{
+    "name": "Love Notes",
+    "short_name": "Love Notes",
+    "description": "A cute way to send love notes",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#B0171F",
+    "icons": [
+
+    ]
+  }
+  
