@@ -30,6 +30,33 @@ h2 {
     color: #4A0C15; /* Deep red/purple */
 }
 
+/* Example styles for the refresh button */
+#refresh-button {
+    position: fixed; 
+    left: 37.5%;
+    top: 2.5%;
+    background-color: transparent; 
+    border: none; 
+    cursor: pointer; /* Changes cursor to pointer on hover */
+    padding: 10px; /* Adds padding for easier clicking */
+    transition: transform 0.2s; /* Smooth scaling effect */
+    z-index: 3;
+}
+
+#refresh-button:hover {
+    transform: scale(1.1); /* Slightly enlarge on hover */
+}
+
+#refresh-button svg {
+    width: 24px; /* Size of the icon */
+    height: 24px; /* Size of the icon */
+    transition: stroke 0.2s; /* Smooth color transition */
+}
+
+#refresh-button:hover svg {
+    stroke: #5B1520; /* Change color on hover */
+}
+
 #auth-container, #notes-container, #form-container {
     width: 90%; /* Use a percentage for responsive width */
     max-width: 500px; /* Set a max width for larger screens */
@@ -101,7 +128,7 @@ textarea:focus {
     flex: 0 0 0px; /* Allow buttons to grow/shrink and set a base size */
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.15));
     transition: background-color 0.3s ease, transform 0.2s ease;
-    font-size: 65px;
+    font-size: 35px;
 }
 
 .mood-button:hover {
@@ -118,7 +145,7 @@ textarea:focus {
 
 .mood-button-text {
     margin: 0px;
-    padding-bottom: 7px;
+    /* padding-bottom: 7px; */
     align-self: center;
 }
 
@@ -134,18 +161,24 @@ button {
 }
 
 .note {
-    background-color: #f9f9f9; /* Light background for notes */
+    background-color: #fffbe6; /* Light paper color */
+    background-image: repeating-linear-gradient(white 0%, white 80%, #d3cbb8 81%, white 83%);
+    background-size: 100% 24px; /* Lines spaced every 24px */
     border: 1px solid #4A0C15; /* Deep red/purple */
     border-radius: 15px;
-    padding: 10px;
+    padding: 20px; /* Increased padding for a more spacious feel */
     margin: 10px 0; /* Space between notes */
     width: 100%; /* Full width for notes */
     box-sizing: border-box; /* Include padding and border */
     font-size: x-large;
     z-index: 2;
-    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
-    animation: slideInUp 2s ease-out;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3)); /* Shadow for depth */
+    animation: slideInUp 2s ease-out; /* Keep your existing animation */
+    font-family: Brush Script MT, Brush Script Std, cursive; /* Handwritten-style font */
+    position: relative; /* For pseudo-elements */
 }
+
+
 
 /* Animation for fading in and sliding up */
 @keyframes slideInUp {
