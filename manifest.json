@@ -5,11 +5,11 @@
     "start_url": ".LoveNotes/index.html",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#B0171F",
+    "theme_color": "#FFFFFF",
     "icons": [
       {
-        "src": ".LoveNotes/icons/icon128.png",
-        "sizes": "128x128",
+        "src": ".LoveNotes/icons/icon192.png",
+        "sizes": "192x192",
         "type": "image/png"
       },
       {
