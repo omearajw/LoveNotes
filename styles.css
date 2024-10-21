@@ -8,7 +8,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top, #f0f0f0, #d0d0d0); /* Grey background */
+    background: linear-gradient(to top, #ffffff, #f0f0f0); /* Grey background */
     color: #4A0C15; /* Deep red/purple text color */
     min-height: 100vh;
 }
@@ -30,21 +30,32 @@ h2 {
     color: #4A0C15; /* Deep red/purple */
 }
 
-/* Example styles for the refresh button */
 #refresh-button {
     position: fixed; 
-    left: 37.5%;
-    top: 2.5%;
+    left: 85%;
+    top: 90%;
     background-color: transparent; 
     border: none; 
-    cursor: pointer; /* Changes cursor to pointer on hover */
-    padding: 10px; /* Adds padding for easier clicking */
-    transition: transform 0.2s; /* Smooth scaling effect */
+    cursor: pointer; 
+    padding: 0; /* Remove any extra padding */
+    width: 40px; /* Set a square button size */
+    height: 40px; /* Set the same height as width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 1s ease; 
     z-index: 3;
 }
 
-#refresh-button:hover {
-    transform: scale(1.1); /* Slightly enlarge on hover */
+#refresh-button svg {
+    width: 24px; 
+    height: 24px; 
+}
+
+
+/* Fade-out effect for mood buttons, send button, and refresh button */
+.spin {
+    transform: rotate(180deg); /* Rotate 180 degrees */
 }
 
 #refresh-button svg {
@@ -53,9 +64,6 @@ h2 {
     transition: stroke 0.2s; /* Smooth color transition */
 }
 
-#refresh-button:hover svg {
-    stroke: #5B1520; /* Change color on hover */
-}
 
 #auth-container, #notes-container, #form-container {
     width: 90%; /* Use a percentage for responsive width */
@@ -95,9 +103,9 @@ textarea {
     border-radius: 4px;
     padding: 10px;
     padding-right: 15px;
-    resize: none;
-    height: 1rem; /* Let JavaScript handle height */
-    min-height: 40px; /* Minimum height for one line */
+    resize: both;
+    height: 1rem;
+    min-height: 40px;
     font-size: 20px;
     box-sizing: border-box;
     overflow: hidden; /* Disable scroll */
@@ -112,6 +120,7 @@ textarea {
 textarea:focus {
     outline: none;
     border-color: #4A0C15; /* Deep red/purple */
+    resize: both !important;
 }
 
 .mood-buttons {
@@ -167,8 +176,14 @@ button {
 
 .note {
     background-color: #fffbe6; /* Light paper color */
-    background-image: repeating-linear-gradient(white 0%, white 80%, #d3cbb8 81%, white 83%);
-    background-size: 100% 24px; /* Lines spaced every 24px */
+    background-image: repeating-linear-gradient(
+        to bottom,          /* Ensure lines go from top to bottom */
+        white 0%,           /* White space for top portion */
+        white 80%,          /* More white space */
+        #d3cbb8 81%,        /* Light line color */
+        white 83%           /* Bottom white space */
+    );
+    background-size: 100% 24px; /* Ensure the lines are spaced every 24px */
     border: 1px solid #4A0C15; /* Deep red/purple */
     border-radius: 15px;
     padding: 20px; /* Increased padding for a more spacious feel */
@@ -181,7 +196,13 @@ button {
     animation: slideInUp 2s ease-out; /* Keep your existing animation */
     font-family: Brush Script MT, Brush Script Std, cursive; /* Handwritten-style font */
     position: relative; /* For pseudo-elements */
+    
+    white-space: pre-wrap; /* Preserve line breaks */
+    word-wrap: break-word; /* Ensure long words wrap to the next line */
+    overflow-wrap: break-word; /* Break long words */
 }
+
+
 
 
 
