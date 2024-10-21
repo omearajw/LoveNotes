@@ -105,6 +105,9 @@
                 if (sendButton) sendButton.classList.add("fade-out");
                 if (refreshButton) refreshButton.classList.add("spin");
 
+                const gradientOverlay = document.getElementById("gradient-overlay");
+                gradientOverlay.style.opacity = 0;
+
                 // Wait for the animation to finish before refreshing the page
                 setTimeout(() => {
                     location.reload();
@@ -309,15 +312,17 @@
                     // Get the gradient based on the note's mood
                     const gradient = moodGradients[note.mood] || moodGradients.default;
 
+                    // Simultaneously update the gradient and display the new note
                     const gradientOverlay = document.getElementById("gradient-overlay");
-                    gradientOverlay.style.opacity = 0;
+                    gradientOverlay.style.transition = 'opacity 2s ease-out'; // Set the transition duration
+                    gradientOverlay.style.opacity = 0; // Start fading out the gradient
 
                     setTimeout(() => {
                         gradientOverlay.style.background = gradient;
-                        gradientOverlay.style.opacity = 1;
-                    }, 1000);
+                        gradientOverlay.style.opacity = 1; // Fade in the new gradient with 2s duration
+                    }, 200); // Delay slightly to align with note animation
 
-                    switch(note.mood) {
+                    switch (note.mood) {
                         case "happy":
                             noteElement.classList.add("happy");
                             break;
@@ -339,12 +344,15 @@
 
                     // Display the note content and sender's name
                     noteElement.innerHTML = `${note.content}<br><span class="sender-name">- ${senderName}</span>`;
-                    document.getElementById("notes-container").innerHTML = "";
-                    document.getElementById("notes-container").appendChild(noteElement);
 
-                    noteElement.addEventListener("click", () => {
-                        handleNoteClick(noteElement, note.id);
-                    });
+                    // Append the note to the container after a small delay
+                    setTimeout(() => {
+                        document.getElementById("notes-container").appendChild(noteElement);
+
+                        noteElement.addEventListener("click", () => {
+                            handleNoteClick(noteElement, note.id);
+                        });
+                    }, 200); // Ensure previous note is cleared before adding the next
                 }
             }
             async function getSenderName(senderID) {
@@ -365,15 +373,22 @@
                 }
             }
 
-
-
             function handleNoteClick(noteElement, noteId) {
+                // Start both animations (note and gradient) simultaneously
                 noteElement.style.animation = 'slideOutUp 2s ease-out'; // Apply the slide out animation
+
+                // Fade out the gradient overlay at the same time as the note exits
+                const gradientOverlay = document.getElementById("gradient-overlay");
+                gradientOverlay.style.transition = 'opacity 2s ease-out';
+                gradientOverlay.style.opacity = 0; // Fade out the gradient overlay
 
                 // Remove the note from the DOM after the animation completes
                 noteElement.addEventListener('animationend', () => {
                     markAsRead(noteId); // Mark the note as read after fade out
-                    handleNextNoteClick(); // Show next note
+                    document.getElementById("notes-container").innerHTML = ""; // Clear the note container
+                    setTimeout(() => {
+                        handleNextNoteClick(); // Show next note after a small delay
+                    }, 200); // Small delay to ensure note is removed before next is shown
                 });
             }
 
