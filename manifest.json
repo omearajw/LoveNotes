@@ -6,7 +6,7 @@
     "start_url": "https://omearajw.github.io/LoveNotes/",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#FFFFFF",
+    "theme_color": "#d0d0d0",
     "icons": [
       {
         "src": "/LoveNotes/icons/icon192.png",
