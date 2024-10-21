@@ -8,7 +8,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top, #ffffff, #f0f0f0); /* Grey background */
+    background: linear-gradient(to top, #f0f0f0, #ffffff); /* Grey background */
     color: #4A0C15; /* Deep red/purple text color */
     min-height: 100vh;
 }
