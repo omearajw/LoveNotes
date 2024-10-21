@@ -119,6 +119,7 @@ textarea:focus {
     justify-content: center; /* Center mood buttons */
     flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
     margin-top: 10px; /* Add some spacing above */
+    transition: opacity 0.1s ease;
 }
 
 .mood-button {
