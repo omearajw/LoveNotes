@@ -593,6 +593,88 @@
 
             // Optional: Display the heart container based on some condition (like a user action)
             document.getElementById("heart-container").style.display = "flex"; // Show the heart
+
+            // NOTIFICATIONS
+            // Example function to generate a random time in the day (e.g., between 9 AM to 6 PM)
+            function getRandomTime() {
+                const startHour = 9;
+                const endHour = 18;
+                const randomHour = Math.floor(Math.random() * (endHour - startHour)) + startHour;
+                const randomMinute = Math.floor(Math.random() * 60);
+                
+                return new Date().setHours(randomHour, randomMinute, 0, 0); // Random time for notification
+            }
+
+            // Function to schedule reminders for a user
+
+            const functions = require('firebase-functions');
+            const admin = require('firebase-admin');
+            admin.initializeApp();
+
+            // Function to send notification
+            exports.sendNotificationAtTime = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
+            const users = await getAllUsers(); // Retrieve all users from your database
+            
+            users.forEach(user => {
+                const randomTime = getRandomTime();
+                // Schedule notification for the user
+                scheduleReminder(user.id, randomTime);
+            });
+            });
+
+            // Helper to send notification
+            function sendNotificationAtTime(userId, time) {
+            const message = {
+                notification: {
+                title: "Reminder",
+                body: "Don't forget to check or send a note today!",
+                },
+                token: userId, // Assuming you're using FCM tokens to identify users
+                scheduledDeliveryTime: time
+            };
+
+            return admin.messaging().send(message).then(response => {
+                console.log("Successfully sent notification:", response);
+            }).catch(error => {
+                console.error("Error sending notification:", error);
+            });
+            }
+
+            // Request notification permission
+            if ('Notification' in window && navigator.serviceWorker) {
+                Notification.requestPermission(status => {
+                    if (status === 'granted') {
+                        // User granted permission
+                        console.log("Notification permission granted.");
+                        // Register service worker for receiving notifications
+                        navigator.serviceWorker.register('/firebase-messaging-sw.js').then(reg => {
+                            console.log("Service Worker registered.");
+                        });
+                    }
+                });
+            }
+
+
+            self.addEventListener('push', function(event) {
+                const data = event.data.json();
+                const options = {
+                    body: data.body,
+                    icon: '/icon.png',
+                };
+
+                event.waitUntil(
+                    self.registration.showNotification(data.title, options)
+                );
+            });
+
+
+            function scheduleReminder(userId) {
+                const randomTime = getRandomTime();
+                
+                // Schedule notification to send at the random time using Firebase Cloud Functions or a cron job
+                sendNotificationAtTime(userId, randomTime);
+            }
+
         </script>
         
     </body>
