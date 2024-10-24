@@ -3,7 +3,7 @@
     "short_name": "Love Notes",
     "description": "A cute way to send love notes",
     "scope": "/LovesNotes/",
-    "start_url": "https://omearajw.github.io/LoveNotes/",
+    "start_url": "/LovesNotes/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
