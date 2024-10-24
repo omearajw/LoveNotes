@@ -5,8 +5,8 @@
     "scope": "/LovesNotes/",
     "start_url": "https://omearajw.github.io/LoveNotes/",
     "display": "standalone",
-    "background_color": "#f0f0f0",
-    "theme_color": "#f0f0f0",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
     "icons": [
       {
         "src": "/LoveNotes/icons/icon192.png",
