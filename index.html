@@ -297,64 +297,108 @@
 
             const defaultGradient = "linear-gradient(to top, #f0f0f0, #ffffff)"; // Replace with your normal background gradient
 
-            async function showNextNote() {
-                if (currentIndex < notes.length) {
-                    const note = notes[currentIndex];
-                    const noteElement = document.createElement("div");
-                    noteElement.classList.add("note");
+async function showNextNote() {
+    if (currentIndex < notes.length) {
+        const note = notes[currentIndex];
+        const noteElement = document.createElement("div");
+        noteElement.classList.add("note");
 
-                    // Get the sender's ID from the note
-                    const senderID = note.sender;
+        // Get the sender's ID from the note
+        const senderID = note.sender;
 
-                    // Fetch the sender's name from Firestore using their ID
-                    const senderName = await getSenderName(senderID);
+        // Fetch the sender's name from Firestore using their ID
+        const senderName = await getSenderName(senderID);
 
-                    // Get the gradient based on the note's mood
-                    const gradient = moodGradients[note.mood] || moodGradients.default;
+        // Get the gradient based on the note's mood
+        const gradient = moodGradients[note.mood] || moodGradients.default;
 
-                    // Simultaneously update the gradient and display the new note
-                    const gradientOverlay = document.getElementById("gradient-overlay");
-                    gradientOverlay.style.transition = 'opacity 2s ease-out'; // Set the transition duration
-                    gradientOverlay.style.opacity = 0; // Start fading out the gradient
+        // Simultaneously update the gradient and display the new note
+        const gradientOverlay = document.getElementById("gradient-overlay");
+        gradientOverlay.style.transition = 'opacity 2s ease-out'; // Set the transition duration
+        gradientOverlay.style.opacity = 0; // Start fading out the gradient
 
-                    setTimeout(() => {
-                        gradientOverlay.style.background = gradient;
-                        gradientOverlay.style.opacity = 1; // Fade in the new gradient with 2s duration
-                    }, 200); // Delay slightly to align with note animation
+        setTimeout(() => {
+            gradientOverlay.style.background = gradient;
+            gradientOverlay.style.opacity = 1; // Fade in the new gradient with 2s duration
+        }, 200); // Delay slightly to align with note animation
 
-                    switch (note.mood) {
-                        case "happy":
-                            noteElement.classList.add("happy");
-                            break;
-                        case "sad":
-                            noteElement.classList.add("sad");
-                            break;
-                        case "excited":
-                            noteElement.classList.add("excited");
-                            break;
-                        case "romantic":
-                            noteElement.classList.add("romantic");
-                            break;
-                        case "thoughtful":
-                            noteElement.classList.add("thoughtful");
-                            break;
-                        default:
-                            noteElement.classList.add("default");
-                    }
+        switch (note.mood) {
+            case "happy":
+                noteElement.classList.add("happy");
+                break;
+            case "sad":
+                noteElement.classList.add("sad");
+                break;
+            case "excited":
+                noteElement.classList.add("excited");
+                break;
+            case "romantic":
+                noteElement.classList.add("romantic");
+                createFloatingHearts(); // Trigger heart animation for romantic mood
+                break;
+            case "thoughtful":
+                noteElement.classList.add("thoughtful");
+                break;
+            default:
+                noteElement.classList.add("default");
+        }
 
-                    // Display the note content and sender's name
-                    noteElement.innerHTML = `${note.content}<br><span class="sender-name">- ${senderName}</span>`;
+        // Display the note content and sender's name
+        noteElement.innerHTML = `${note.content}<br><span class="sender-name">- ${senderName}</span>`;
 
-                    // Append the note to the container after a small delay
-                    setTimeout(() => {
-                        document.getElementById("notes-container").appendChild(noteElement);
+        // Append the note to the container after a small delay
+        setTimeout(() => {
+            document.getElementById("notes-container").appendChild(noteElement);
 
-                        noteElement.addEventListener("click", () => {
-                            handleNoteClick(noteElement, note.id);
-                        });
-                    }, 200); // Ensure previous note is cleared before adding the next
-                }
-            }
+            noteElement.addEventListener("click", () => {
+                handleNoteClick(noteElement, note.id);
+            });
+        }, 200); // Ensure previous note is cleared before adding the next
+    }
+}
+
+// Create floating hearts for romantic mood with random sizes and positions
+function createFloatingHearts() {
+    const heartContainer = document.createElement('div');
+    heartContainer.classList.add('heart-container');
+
+    // Create 10 hearts with random sizes and positions
+    for (let i = 0; i < 25; i++) {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+
+        // Randomize the size of the heart
+        const size = getRandom(20, 60); // Size between 20px and 60px
+        heart.style.width = `${size}px`;
+        heart.style.height = `${size}px`;
+
+        // Randomize the left position of the heart
+        const leftPosition = getRandom(0, 100); // Left position between 0% and 100%
+        heart.style.left = `${leftPosition}%`;
+
+        // Randomize the animation duration and delay
+        const duration = getRandom(3, 5); // Duration between 3s and 6s
+        const delay = getRandom(0, 3); // Delay between 0s and 3s
+        heart.style.animationDuration = `${duration}s`;
+        heart.style.animationDelay = `${delay}s`;
+
+        heartContainer.appendChild(heart);
+    }
+
+    document.body.appendChild(heartContainer);
+
+    // Optionally, remove hearts after the animation is done
+    setTimeout(() => {
+        heartContainer.remove();
+    }, 8000); // Adjust timing to match the longest animation duration
+}
+
+// Helper function to get a random number between min and max
+function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+
             async function getSenderName(senderID) {
                 try {
                     const userRef = doc(db, 'users', senderID); // Assuming 'users' is the collection for user profiles
@@ -446,60 +490,6 @@
                 noteInput.style.height = "auto"; // Reset height to auto to measure scrollHeight
                 noteInput.style.height = `${noteInput.scrollHeight}px`; // Set height to scrollHeight
             });
-
-            // Assume you're already set up with Firebase
-
-            // // Function to send a heart
-            // async function sendHeart() {
-            //     await addDoc(collection(db, "hearts"), {
-            //         sender: auth.currentUser.uid,
-            //         timestamp: new Date(),
-            //     });
-            // }
-
-            // // Listener for heart taps
-            // document.addEventListener("click", sendHeart);
-
-            // async function markHeartAsShown(heartId) {
-            //     const heartRef = doc(db, "hearts", heartId);
-            //     await updateDoc(heartRef, { shown: true });
-            // }
-
-            // onSnapshot(collection(db, "hearts"), (snapshot) => {
-            //     snapshot.docChanges().forEach(async (change) => {
-            //         if (change.type === "added") {
-            //             const heartData = change.doc.data();
-            //             if (!heartData.shown) { // Check if the heart has been shown
-            //                 displayHeart(heartData.sender);
-            //                 await markHeartAsShown(change.doc.id); // Mark as shown
-            //             }
-            //         }
-            //     });
-            // });
-
-            // // Function to display heart on the screen
-            // function displayHeart(senderId) {
-            //     const heartElement = document.createElement("div");
-            //     heartElement.classList.add("heart");
-            //     heartElement.textContent = "❤️"; // Heart icon
-            //     document.body.appendChild(heartElement);
-                
-            //     // Position the heart at the click location
-            //     heartElement.style.position = "absolute";
-            //     heartElement.style.left = `${Math.random() * window.innerWidth}px`;
-            //     heartElement.style.top = `${Math.random() * window.innerHeight}px`;
-                
-            //     // Animate the heart (e.g., float up and fade out)
-            //     heartElement.animate([{ transform: "translateY(0)" }, { transform: "translateY(-50px)", opacity: 0 }], {
-            //         duration: 2000,
-            //         fill: "forwards"
-            //     });
-
-            //     // Remove heart from DOM after animation
-            //     setTimeout(() => {
-            //         heartElement.remove();
-            //     }, 2000);
-            // }
 
             // Function to show the heart when notes are displayed
             function showHeart() {
@@ -594,7 +584,9 @@
             // Optional: Display the heart container based on some condition (like a user action)
             document.getElementById("heart-container").style.display = "flex"; // Show the heart
 
+            /////////////////
             // NOTIFICATIONS
+            /////////////////
             // Example function to generate a random time in the day (e.g., between 9 AM to 6 PM)
             function getRandomTime() {
                 const startHour = 9;

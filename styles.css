@@ -329,3 +329,33 @@ button {
     filter: drop-shadow(0 0 100px rgb(135, 12, 12)); /* Red glow effect */
 }
 
+/* Romantic note theme */
+/* Floating heart animation for romantic notes */
+@keyframes floatUp {
+    0% {
+        transform: translateY(100%);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh); /* Move up the entire screen height */
+        opacity: 0;
+    }
+}
+
+.heart-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Prevent interaction with hearts */
+    overflow: hidden;
+    z-index: 1; /* Ensure hearts are visible but below main content */
+}
+
+.heart {
+    position: absolute;
+    bottom: -100px; /* Start just below the visible screen */
+    background-color: rgba(255, 0, 100, 0.7); /* Pink hearts */
+    clip-path: path("M12 4.248c-3.148-5.402-12-3.825-12 2.944 0 4.661 5.571 9.427 12 15.808 6.43-6.381 12-11.147 12-15.808 0-6.792-8.875-8.306-12-2.944z");
+    animation: floatUp ease-in-out;
+}
