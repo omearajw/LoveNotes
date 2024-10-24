@@ -103,7 +103,7 @@ textarea {
     border-radius: 4px;
     padding: 10px;
     padding-right: 15px;
-    resize: both;
+    resize: none;
     height: 1rem;
     min-height: 40px;
     font-size: 20px;
@@ -120,7 +120,6 @@ textarea {
 textarea:focus {
     outline: none;
     border-color: #4A0C15; /* Deep red/purple */
-    resize: both !important;
 }
 
 .mood-buttons {
