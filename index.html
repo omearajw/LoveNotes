@@ -681,7 +681,7 @@
                         // User granted permission
                         console.log("Notification permission granted.");
                         // Register service worker for receiving notifications
-                        navigator.serviceWorker.register('/firebase-messaging-sw.js').then(reg => {
+                        navigator.serviceWorker.register('/service-worker.js').then(reg => {
                             console.log("Service Worker registered.");
                         });
                     }
