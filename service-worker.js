@@ -8,6 +8,36 @@ const urlsToCache = [
     '/icons/icon512.png'
 ];
 
+// Import Firebase scripts for messaging
+importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js');
+
+// Initialize Firebase in the service worker
+firebase.initializeApp({
+    apiKey: "AIzaSyDRQ1Wu8dnHbVzJtRx_MfsxRaU5yZAYMnM",
+    authDomain: "lovenoteswebsite.firebaseapp.com",
+    projectId: "lovenoteswebsite",
+    storageBucket: "lovenoteswebsite.appspot.com",
+    messagingSenderId: "105997806469",
+    appId: "1:105997806469:web:4f466a42c74355db49b2ec",
+});
+
+// Initialize Firebase Messaging
+const messaging = firebase.messaging();
+
+// Handle background messages
+messaging.onBackgroundMessage((payload) => {
+    console.log('Received background message ', payload);
+
+    const notificationTitle = payload.notification.title;
+    const notificationOptions = {
+        body: payload.notification.body,
+        icon: payload.notification.icon
+    };
+
+    self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
 // Install the service worker and cache resources
 self.addEventListener('install', (event) => {
     event.waitUntil(

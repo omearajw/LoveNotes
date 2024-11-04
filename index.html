@@ -59,6 +59,7 @@
             import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
             import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, onSnapshot, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
             import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+            import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js";
             
             const firebaseConfig = {
                 apiKey: "AIzaSyDRQ1Wu8dnHbVzJtRx_MfsxRaU5yZAYMnM",
@@ -73,7 +74,8 @@
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             const auth = getAuth(app); // Initialize Firebase Auth
-        
+            const messaging = getMessaging(app);
+
             let notes = [];
             let currentIndex = 0;
             let selectedMood = ""; // Store the selected mood
@@ -88,6 +90,45 @@
                     });
                 });
             }
+
+            async function requestNotificationPermission() {
+                try {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted.');
+
+                        // Get the FCM token for the device
+                        const token = await getToken(messaging, { vapidKey: 'BJRfxIYGCZvdn_quwWZHJHr-iJJ-0tsuCSNDoedK0SEPfRAjv0bDxMKxHKxYcGDRd0QV_u6AVTT19NpR_Mfc2Zk' });
+                        if (token) {
+                            console.log('FCM Token:', token);
+                            // Save this token to your database if you want to send notifications to this user
+                        } else {
+                            console.log('No registration token available.');
+                        }
+                    } else {
+                        console.log('Notification permission denied.');
+                    }
+                } catch (error) {
+                    console.error('Error getting notification permission:', error);
+                }
+            }
+
+            // Call the function to request permission
+            requestNotificationPermission();
+
+            onMessage(messaging, (payload) => {
+                console.log('Message received. ', payload);
+                // Customize notification display here
+                const notificationTitle = payload.notification.title;
+                const notificationOptions = {
+                    body: payload.notification.body,
+                    icon: payload.notification.icon
+                };
+
+                new Notification(notificationTitle, notificationOptions);
+            });
+
+
 
             document.getElementById("refresh-button").addEventListener("click", () => {
                 // Get the elements to fade out
