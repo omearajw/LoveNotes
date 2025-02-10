@@ -127,11 +127,14 @@ textarea:focus {
     justify-content: center; /* Center mood buttons */
     flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
     margin-top: 10px; /* Add some spacing above */
+    max-width: 250px;
+    min-width: 250px;
     transition: opacity 0.1s ease;
+    margin: auto;
 }
 
 .mood-button {
-     background-color: #4A0C15;/*  Deep red/purple */
+    background-color: #4A0C15;/*  Deep red/purple */
     color: white; /* White text */
     border: none;
     border-radius: 1000px;
