@@ -45,7 +45,8 @@
                     <button type="button" class="mood-button no-select" data-mood="excited" style="background-color: rgb(255, 151, 31);"><p class="mood-button-text">😁</p></button>
                     <button type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(164, 41, 100);"><p class="mood-button-text">😍</p></button>
                     <button type="button" class="mood-button no-select" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);"><p class="mood-button-text">🤔</p></button>
-                    <button type="button" class="mood-button no-select" data-mood="hot" style="background-color: rgb(89, 15, 15);"><p class="mood-button-text">😏</p></button>
+                    <button type="button" class="mood-button no-select" data-mood="hot" style="background-color: rgb(101, 9, 37);"><p class="mood-button-text">😏</p></button>
+                    <button type="button" class="mood-button no-select" data-mood="demon" style="background-color: rgb(180, 0, 0);"><p class="mood-button-text">👹</p></button>
                 </div>
                 <button id="send-button" type="submit">Send Note</button>
             </form>
@@ -336,6 +337,7 @@
                 romantic: "linear-gradient(to top, #FF69B4, #c23c32)", // Pink to red
                 thoughtful: "linear-gradient(to top, #6a5acd, #d1c4e9)", // Slate blue to light lavender
                 hot: "linear-gradient(to top, #750e0e, #800832)", // Red to purpley red
+                demon: "linear-gradient(to top, #d81111, #a30000)", // Bright red to dark red
                 default: "linear-gradient(to top, #f0f0f0, #ffffff)" // Light gray gradient
             };
 
@@ -382,6 +384,12 @@
                             break;
                         case "thoughtful":
                             noteElement.classList.add("thoughtful");
+                            break;
+                        case "hot":
+                            noteElement.classList.add("hot");
+                            break;
+                        case "demon":
+                            noteElement.classList.add("demon");
                             break;
                         default:
                             noteElement.classList.add("default");

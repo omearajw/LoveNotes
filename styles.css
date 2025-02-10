@@ -285,6 +285,11 @@ button {
     filter: drop-shadow(0 0 10px rgba(97, 15, 15, 1));
 }
 
+.note.demon {
+    border: 5px solid rgb(229, 11, 11);
+    filter: drop-shadow(0 0 10px rgba(229, 11, 11, 1));
+}
+
 #heart-container {
     position: fixed;
     display: flex;
