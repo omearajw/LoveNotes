@@ -58,7 +58,7 @@
             import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js";
             import { signUp, signIn, checkAuthState } from './auth.js';
             import { saveUser, addNote, getNotes, getSenderName, markAsRead, sendHeartbeat, listenForHeartbeats, cleanupOldHeartbeats } from './firestore.js';
-            import { showContainer, showHeart, displayHeartbeat, createFloatingHearts } from './ui.js';
+            import { showContainer, showHeart, displayHeartbeat  } from './ui.js';
 
             const auth = getAuth();
             const db = getFirestore();
@@ -267,10 +267,7 @@
                         const senderName = await getSenderName(note.sender);
                         const noteElement = document.createElement('div');
                         noteElement.classList.add('note');
-                        noteElement.innerHTML = `
-                            <p>${note.content}</p>
-                            <p><strong>From:</strong> ${senderName}</p>
-                        `;
+                        noteElement.innerHTML = `${note.content}<br><span class="sender-name">- ${senderName}</span>`;
                         noteElement.addEventListener('click', () => handleNoteClick(noteElement, note.id));
 
                         // Get the gradient based on the note's mood
@@ -288,6 +285,11 @@
 
                             // Append the note element after the gradient transition starts
                             document.getElementById("notes-container").appendChild(noteElement);
+
+                            // Trigger mood-specific animations
+                            if (note.mood === 'romantic') {
+                                // Create fluttering hearts for romantic notes
+                            }
                         }, 1000); // Match this to the fade-out duration
                     }
                 } catch (error) {
