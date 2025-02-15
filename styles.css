@@ -104,12 +104,11 @@ textarea {
     padding: 10px;
     padding-right: 15px;
     resize: none;
-    height: 1rem;
-    min-height: 40px;
+    height: auto; /* Set initial height to auto */
+    min-height: 60px; /* Set a more appropriate initial height */
     font-size: 20px;
     box-sizing: border-box;
     overflow: hidden; /* Disable scroll */
-    transition: height 0.2s ease; /* Add smooth transition */
 }
 
 #form-container {

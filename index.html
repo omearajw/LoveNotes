@@ -10,23 +10,17 @@
     <body>
         <button id="refresh-button" class="no-select">
             <svg fill="#cccccc" height="10px" width="10px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 489.698 489.698" xml:space="preserve" stroke="#cccccc"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M468.999,227.774c-11.4,0-20.8,8.3-20.8,19.8c-1,74.9-44.2,142.6-110.3,178.9c-99.6,54.7-216,5.6-260.6-61l62.9,13.1 c10.4,2.1,21.8-4.2,23.9-15.6c2.1-10.4-4.2-21.8-15.6-23.9l-123.7-26c-7.2-1.7-26.1,3.5-23.9,22.9l15.6,124.8 c1,10.4,9.4,17.7,19.8,17.7c15.5,0,21.8-11.4,20.8-22.9l-7.3-60.9c101.1,121.3,229.4,104.4,306.8,69.3 c80.1-42.7,131.1-124.8,132.1-215.4C488.799,237.174,480.399,227.774,468.999,227.774z"></path> <path d="M20.599,261.874c11.4,0,20.8-8.3,20.8-19.8c1-74.9,44.2-142.6,110.3-178.9c99.6-54.7,216-5.6,260.6,61l-62.9-13.1 c-10.4-2.1-21.8,4.2-23.9,15.6c-2.1,10.4,4.2,21.8,15.6,23.9l123.8,26c7.2,1.7,26.1-3.5,23.9-22.9l-15.6-124.8 c-1-10.4-9.4-17.7-19.8-17.7c-15.5,0-21.8,11.4-20.8,22.9l7.2,60.9c-101.1-121.2-229.4-104.4-306.8-69.2 c-80.1,42.6-131.1,124.8-132.2,215.3C0.799,252.574,9.199,261.874,20.599,261.874z"></path> </g> </g> </g></svg>
-            </svg>
         </button>
 
         <div id="gradient-overlay" class="gradient-overlay"></div>
 
         <div id="auth-container" style="display:none">
-        <!-- <div id="auth-container"> -->
-            <!-- Disabled sign up to stop random people using the website -->
-            <!-- <h2>Sign Up</h2> -->
             <form id="signup-form" style="display:none !important;">
-            <!-- <form id="signup-form"> -->
                 <input type="text" id="signup-name" placeholder="Enter your name" required>
                 <input type="email" id="signup-email" placeholder="Enter your email" required>
                 <input type="password" id="signup-password" placeholder="Enter your password" required>
                 <button type="submit">Sign Up</button>
             </form>            
-            
             <h2>Sign In</h2>
             <form id="signin-form">
                 <input type="email" id="signin-email" placeholder="Email" required>
@@ -59,29 +53,20 @@
     
         <!-- Firebase SDK -->
         <script type="module">
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-            import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, onSnapshot, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-            import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+            import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+            import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
             import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js";
-            
-            const firebaseConfig = {
-                apiKey: "AIzaSyDRQ1Wu8dnHbVzJtRx_MfsxRaU5yZAYMnM",
-                authDomain: "lovenoteswebsite.firebaseapp.com",
-                projectId: "lovenoteswebsite",
-                storageBucket: "lovenoteswebsite.appspot.com",
-                messagingSenderId: "105997806469",
-                appId: "1:105997806469:web:4f466a42c74355db49b2ec",
-                measurementId: "G-W252Q65Z4D"
-            };
-        
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const auth = getAuth(app); // Initialize Firebase Auth
-            const messaging = getMessaging(app);
+            import { signUp, signIn, checkAuthState } from './auth.js';
+            import { saveUser, addNote, getNotes, getSenderName, markAsRead, sendHeartbeat, listenForHeartbeats, cleanupOldHeartbeats } from './firestore.js';
+            import { showContainer, showHeart, displayHeartbeat, createFloatingHearts } from './ui.js';
+
+            const auth = getAuth();
+            const db = getFirestore();
+            const messaging = getMessaging();
 
             let notes = [];
             let currentIndex = 0;
-            let selectedMood = ""; // Store the selected mood
+            let selectedMood = "";
 
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
@@ -99,12 +84,9 @@
                     const permission = await Notification.requestPermission();
                     if (permission === 'granted') {
                         console.log('Notification permission granted.');
-
-                        // Get the FCM token for the device
                         const token = await getToken(messaging, { vapidKey: 'BJRfxIYGCZvdn_quwWZHJHr-iJJ-0tsuCSNDoedK0SEPfRAjv0bDxMKxHKxYcGDRd0QV_u6AVTT19NpR_Mfc2Zk' });
                         if (token) {
                             console.log('FCM Token:', token);
-                            // Save this token to your database if you want to send notifications to this user
                         } else {
                             console.log('No registration token available.');
                         }
@@ -116,33 +98,26 @@
                 }
             }
 
-            // Call the function to request permission
             requestNotificationPermission();
 
             onMessage(messaging, (payload) => {
                 console.log('Message received. ', payload);
-                // Customize notification display here
                 const notificationTitle = payload.notification.title;
                 const notificationOptions = {
                     body: payload.notification.body,
                     icon: payload.notification.icon
                 };
-
                 new Notification(notificationTitle, notificationOptions);
             });
 
-
-
             document.getElementById("refresh-button").addEventListener("click", () => {
-                // Get the elements to fade out
                 const note = document.querySelector(".note");
                 const heart = document.getElementById("heart-container");
                 const noteInput = document.getElementById("note-input");
-                const moodButtons = document.querySelectorAll(".mood-button"); // Ensure your mood buttons have this class
+                const moodButtons = document.querySelectorAll(".mood-button");
                 const sendButton = document.getElementById("send-button");
                 const refreshButton = document.getElementById("refresh-button");
 
-                // Add the fade-out class to the elements
                 if (note) note.classList.add("fade-out");
                 if (heart) heart.classList.add("fade-out");
                 if (noteInput) noteInput.classList.add("fade-out");
@@ -153,42 +128,61 @@
                 const gradientOverlay = document.getElementById("gradient-overlay");
                 gradientOverlay.style.opacity = 0;
 
-                // Wait for the animation to finish before refreshing the page
                 setTimeout(() => {
                     location.reload();
                     console.log("Page refreshed");
-                }, 1000); // 1 second delay matches the fade-out duration
+                }, 1000);
             });
 
-        
-            // Check if a user is signed in
-            onAuthStateChanged(auth, (user) => {
+            checkAuthState((user) => {
                 if (user) {
-                    // User is signed in
-                    document.getElementById("auth-container").style.display = "none"; // Hide auth section
-                    document.getElementById("notes-container").style.display = "block"; // Show notes container
-                    showContainer(document.getElementById("notes-container"))
-                    getNotes(); // Fetch notes for the signed-in user
+                    document.getElementById("auth-container").style.display = "none";
+                    document.getElementById("notes-container").style.display = "block";
+                    showContainer(document.getElementById("notes-container"));
+                    getNotes(user.uid).then((fetchedNotes) => {
+                        console.log("Fetched notes:", fetchedNotes); // Debugging statement
+                        notes = fetchedNotes;
+                        currentIndex = 0; // Reset currentIndex when fetching new notes
+                        if (notes.length > 0) {
+                            showNextNote();
+                        } else {
+                            document.getElementById("notes-container").style.display = "none";
+                            showHeart();
+                            document.getElementById("form-container").style.display = "block";
+                            showContainer(document.getElementById("form-container"));
+                        }
+                    }).catch((error) => {
+                        console.error("Error fetching notes:", error); // Error handling
+                    });
+
+                    // Listen for heartbeats
+                    listenForHeartbeats(user.uid, () => {
+                        displayHeartbeat();
+                    });
+
+                    // Cleanup old heartbeats periodically
+                    setInterval(() => {
+                        cleanupOldHeartbeats();
+                    }, 5000); // Adjust the interval as needed
                 } else {
-                    // No user is signed in
-                    document.getElementById("auth-container").style.display = "block"; // Show auth section
-                    document.getElementById("notes-container").style.display = "none"; // Hide notes container
+                    document.getElementById("auth-container").style.display = "block";
+                    document.getElementById("notes-container").style.display = "none";
                 }
             });
-        
+
             document.querySelectorAll('.mood-button').forEach(button => {
                 button.addEventListener('click', () => {
                     selectedMood = button.getAttribute('data-mood');
                     document.querySelectorAll('.mood-button').forEach(b => b.classList.remove('selected'));
-                    button.classList.add('selected'); // Highlight selected mood
+                    button.classList.add('selected');
                 });
             });
-        
+
             document.getElementById("note-form").addEventListener("submit", async (e) => {
                 e.preventDefault();
-                
+
                 const noteInput = document.getElementById("note-input");
-                const moodButtons = document.querySelectorAll(".mood-button"); // Ensure your mood buttons have this class
+                const moodButtons = document.querySelectorAll(".mood-button");
                 const sendButton = document.getElementById("send-button");
 
                 if (!noteInput || !sendButton || moodButtons.length === 0) {
@@ -199,47 +193,31 @@
                 const note = noteInput.value;
                 if (!note || !selectedMood) {
                     console.warn("Note or mood is missing.");
-                    return; // Ensure note and mood are provided before submitting
+                    return;
                 }
 
-                // Disable input and buttons during the animation
                 noteInput.disabled = true;
                 sendButton.disabled = true;
                 moodButtons.forEach(button => button.disabled = true);
 
-                // Trigger fade-out animation for mood buttons and send button
-                moodButtons.forEach(button => console.log(button));
                 moodButtons.forEach(button => button.classList.remove("fade-in"));
                 moodButtons.forEach(button => button.classList.add("fade-out"));
                 sendButton.classList.remove("fade-in");
                 sendButton.classList.add("fade-out");
 
-                // Trigger slide-up animation for the note input
                 noteInput.classList.remove("slide-up-reset");
                 noteInput.classList.add("slide-up");
 
-                // Simulate sending the note after animations play
                 setTimeout(async () => {
-                    // Send the note to Firestore
-                    await addDoc(collection(db, "notes"), {
-                        content: note,
-                        mood: selectedMood,
-                        timestamp: new Date(),
-                        sender: auth.currentUser.uid,
-                        read: false // Add a read flag
-                    });
+                    await addNote(note, selectedMood, auth.currentUser.uid);
 
-                    // Clear the input and reset mood selection
                     noteInput.value = "";
                     selectedMood = "";
 
-                    // Wait for a second, then bring back the buttons with fade-in effect
                     setTimeout(() => {
-                        // Reset slide-up animation for the input
                         noteInput.classList.remove("slide-up");
-                        noteInput.classList.add("slide-up-reset"); // Optional reset for smooth transition
+                        noteInput.classList.add("slide-up-reset");
 
-                        // Fade-in mood buttons and send button
                         moodButtons.forEach(button => {
                             button.classList.remove("fade-out");
                             button.classList.add("fade-in");
@@ -248,88 +226,28 @@
                         sendButton.classList.remove("fade-out");
                         sendButton.classList.add("fade-in");
 
-                        // Re-enable form interactions
                         noteInput.disabled = false;
                         sendButton.disabled = false;
                         moodButtons.forEach(button => button.disabled = false);
-                    }, 1000); // Match this delay to the fade-in transition duration
+                    }, 1000);
 
-                    // Refresh the notes displayed
-                    getNotes();
-
-                }, 1000); // Delay to allow the fade-out and slide-up animations to complete
+                    getNotes(auth.currentUser.uid).then((fetchedNotes) => {
+                        console.log("Fetched notes after adding:", fetchedNotes); // Debugging statement
+                        notes = fetchedNotes;
+                        currentIndex = 0; // Reset currentIndex when fetching new notes
+                        if (notes.length > 0) {
+                            showNextNote();
+                        } else {
+                            document.getElementById("notes-container").style.display = "none";
+                            showHeart();
+                            document.getElementById("form-container").style.display = "block";
+                            showContainer(document.getElementById("form-container"));
+                        }
+                    }).catch((error) => {
+                        console.error("Error fetching notes after adding:", error); // Error handling
+                    });
+                }, 1000);
             });
-        
-            // Sign up function
-            async function signUp(email, password, name) {
-                try {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    
-                    if (userCredential && userCredential.user) {
-                        const user = userCredential.user;
-                        console.log("User signed up and signed in:", user.uid);
-                    
-                        // Save user's name in Firestore
-                        const userRef = doc(db, 'users', user.uid); // Correct Firestore reference
-                        await setDoc(userRef, {
-                            name: name,  // Save the user's name
-                            email: email,
-                            userId: user.uid
-                        });
-                        
-                        console.log("User's name saved successfully.");
-                    } else {
-                        console.error("Error: User credential or user object is null.");
-                    }
-                    
-                } catch (error) {
-                    console.error("Error signing up:", error);
-                }
-            }
-        
-            // Sign in function
-            async function signIn(email, password) {
-                try {
-                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
-                    console.log("User signed in:", user.uid);
-                } catch (error) {
-                    console.error("Error signing in:", error);
-                }
-            }
-        
-            async function getNotes() {
-                const querySnapshot = await getDocs(collection(db, "notes"));
-                notes = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if (data.sender !== auth.currentUser.uid && !data.read) { // Only show unread notes from the other user
-                        notes.push({ id: doc.id, ...data }); // Include the document ID for updating later
-                    }
-                });
-
-                    // Sort notes by timestamp in ascending order (oldest first)
-                notes.sort((a, b) => {
-                    return a.timestamp.toMillis() - b.timestamp.toMillis(); // Assuming timestamp is a Firestore Timestamp
-                });
-
-                // Show new notes if any
-                if (notes.length > 0) {
-                    showNextNote();
-                } else {
-                    document.getElementById("notes-container").style.display = "none";
-                    showHeart();
-                    document.getElementById("form-container").style.display = "block"; // Show form if no notes
-                    showContainer(document.getElementById("form-container"));
-                }
-            }
-
-            function showContainer(container) {
-                container.style.display = "block"; // Ensure it is visible
-                setTimeout(() => {
-                    container.classList.add("show-container"); // Add the class after display is set
-                }, 10); // Slight delay to ensure display change applies first
-            }
 
             const moodGradients = {
                 happy: "linear-gradient(to top, #ffec61, #ffb74d)", // Yellow to light orange
@@ -342,141 +260,48 @@
                 default: "linear-gradient(to top, #f0f0f0, #ffffff)" // Light gray gradient
             };
 
-            const defaultGradient = "linear-gradient(to top, #f0f0f0, #ffffff)"; // Replace with your normal background gradient
-
             async function showNextNote() {
-                if (currentIndex < notes.length) {
-                    const note = notes[currentIndex];
-                    const noteElement = document.createElement("div");
-                    noteElement.classList.add("note");
-
-                    // Get the sender's ID from the note
-                    const senderID = note.sender;
-
-                    // Fetch the sender's name from Firestore using their ID
-                    const senderName = await getSenderName(senderID);
-
-                    // Get the gradient based on the note's mood
-                    const gradient = moodGradients[note.mood] || moodGradients.default;
-
-                    // Simultaneously update the gradient and display the new note
-                    const gradientOverlay = document.getElementById("gradient-overlay");
-                    gradientOverlay.style.transition = 'opacity 2s ease-out'; // Set the transition duration
-                    gradientOverlay.style.opacity = 0; // Start fading out the gradient
-
-                    setTimeout(() => {
-                        gradientOverlay.style.background = gradient;
-                        gradientOverlay.style.opacity = 1; // Fade in the new gradient with 2s duration
-                    }, 200); // Delay slightly to align with note animation
-
-                    switch (note.mood) {
-                        case "happy":
-                            noteElement.classList.add("happy");
-                            break;
-                        case "sad":
-                            noteElement.classList.add("sad");
-                            break;
-                        case "excited":
-                            noteElement.classList.add("excited");
-                            break;
-                        case "romantic":
-                            noteElement.classList.add("romantic");
-                            // createFloatingHearts();
-                            break;
-                        case "thoughtful":
-                            noteElement.classList.add("thoughtful");
-                            break;
-                        case "hot":
-                            noteElement.classList.add("hot");
-                            break;
-                        case "demon":
-                            noteElement.classList.add("demon");
-                            break;
-                        default:
-                            noteElement.classList.add("default");
-                    }
-
-                    // Display the note content and sender's name
-                    noteElement.innerHTML = `${note.content}<br><span class="sender-name">- ${senderName}</span>`;
-
-                    // Append the note to the container after a small delay
-                    setTimeout(() => {
-                        document.getElementById("notes-container").appendChild(noteElement);
-
-                        noteElement.addEventListener("click", () => {
-                            handleNoteClick(noteElement, note.id);
-                        });
-                    }, 200); // Ensure previous note is cleared before adding the next
-                }
-            }
-
-            // Create floating hearts for romantic mood with random sizes and positions
-            function createFloatingHearts() {
-                const heartContainer = document.createElement('div');
-                heartContainer.classList.add('heart-container');
-
-                // Create 10 hearts with random sizes and positions
-                for (let i = 0; i < 25; i++) {
-                    const heart = document.createElement('div');
-                    heart.classList.add('heart');
-
-                    // Randomize the size of the heart
-                    const size = getRandom(20, 60); // Size between 20px and 60px
-                    heart.style.width = `${size}px`;
-                    heart.style.height = `${size}px`;
-
-                    // Randomize the left position of the heart
-                    const leftPosition = getRandom(0, 100); // Left position between 0% and 100%
-                    heart.style.left = `${leftPosition}%`;
-
-                    // Randomize the animation duration and delay
-                    const duration = getRandom(3, 5); // Duration between 3s and 6s
-                    const delay = getRandom(0, 3); // Delay between 0s and 3s
-                    heart.style.animationDuration = `${duration}s`;
-                    heart.style.animationDelay = `${delay}s`;
-
-                    heartContainer.appendChild(heart);
-                }
-
-                document.body.appendChild(heartContainer);
-
-                // Optionally, remove hearts after the animation is done
-                setTimeout(() => {
-                    heartContainer.remove();
-                }, 8000); // Adjust timing to match the longest animation duration
-            }
-
-            // Helper function to get a random number between min and max
-            function getRandom(min, max) {
-                return Math.random() * (max - min) + min;
-            }
-
-
-            async function getSenderName(senderID) {
                 try {
-                    const userRef = doc(db, 'users', senderID); // Assuming 'users' is the collection for user profiles
-                    const userSnap = await getDoc(userRef);
+                    if (currentIndex < notes.length) {
+                        const note = notes[currentIndex];
+                        const senderName = await getSenderName(note.sender);
+                        const noteElement = document.createElement('div');
+                        noteElement.classList.add('note');
+                        noteElement.innerHTML = `
+                            <p>${note.content}</p>
+                            <p><strong>From:</strong> ${senderName}</p>
+                        `;
+                        noteElement.addEventListener('click', () => handleNoteClick(noteElement, note.id));
 
-                    if (userSnap.exists()) {
-                        const userData = userSnap.data();
-                        return userData.name; // Return the name of the user
-                    } else {
-                        console.log('No such user!');
-                        return 'Unknown Sender';
+                        // Get the gradient based on the note's mood
+                        const gradient = moodGradients[note.mood] || moodGradients.default;
+
+                        // Simultaneously update the gradient and display the new note
+                        const gradientOverlay = document.getElementById("gradient-overlay");
+                        gradientOverlay.style.transition = 'opacity 1s ease-out'; // Set the transition duration
+                        gradientOverlay.style.opacity = 0; // Start fading out the gradient
+
+                        // Wait for the fade-out transition to complete before applying the new gradient
+                        setTimeout(() => {
+                            gradientOverlay.style.background = gradient;
+                            gradientOverlay.style.opacity = 1; // Fade in the new gradient
+
+                            // Append the note element after the gradient transition starts
+                            document.getElementById("notes-container").appendChild(noteElement);
+                        }, 1000); // Match this to the fade-out duration
                     }
                 } catch (error) {
-                    console.error("Error retrieving sender's name:", error);
-                    return 'Unknown Sender';
+                    console.error("Error showing next note:", error); // Error handling
                 }
             }
 
             function handleNoteClick(noteElement, noteId) {
                 // Start both animations (note and gradient) simultaneously
-                noteElement.style.animation = 'slideOutUp 2s ease-out'; // Apply the slide out animation
+                noteElement.style.animation = 'slideOutUp 1s ease-out'; // Apply the slide out animation
 
                 // Fade out the gradient overlay at the same time as the note exits
                 const gradientOverlay = document.getElementById("gradient-overlay");
-                gradientOverlay.style.transition = 'opacity 2s ease-out';
+                gradientOverlay.style.transition = 'opacity 1s ease-out';
                 gradientOverlay.style.opacity = 0; // Fade out the gradient overlay
 
                 // Remove the note from the DOM after the animation completes
@@ -489,15 +314,10 @@
                 });
             }
 
-            async function markAsRead(noteId) {
-                const noteRef = doc(db, "notes", noteId);
-                await updateDoc(noteRef, { read: true });
-            }
-        
             function handleNextNoteClick() {
                 currentIndex++;
                 document.removeEventListener("click", handleNextNoteClick); // Remove event listener to avoid multiple triggers
-        
+
                 if (currentIndex < notes.length) {
                     showNextNote(); // Show next note
                 } else {
@@ -505,7 +325,7 @@
                     const gradientOverlay = document.getElementById("gradient-overlay");
                     gradientOverlay.style.opacity = 0; // Fade out the overlay
                     setTimeout(() => {
-                        gradientOverlay.style.background = defaultGradient; // Set back to default gradient
+                        gradientOverlay.style.background = moodGradients.default; // Set back to default gradient
                         gradientOverlay.style.opacity = 1; // Fade in the default gradient
                     }, 1000); // Match this to the fade-out duration
 
@@ -516,210 +336,16 @@
                     document.getElementById("notes-container").innerHTML = ""; // Clear notes container
                 }
             }
-        
-            document.getElementById("signup-form").addEventListener("submit", async (e) => {
-                e.preventDefault();
-                
-                // Get name, email, and password from form
-                const name = document.getElementById("signup-name").value;  // New name input
-                const email = document.getElementById("signup-email").value;
-                const password = document.getElementById("signup-password").value;
-                
-                // Call the sign-up function with email, password, and name
-                await signUp(email, password, name);
+
+            document.getElementById("note-input").addEventListener("input", function() {
+                this.style.height = "auto";
+                this.style.height = (this.scrollHeight) + "px";
             });
 
-        
-            document.getElementById("signin-form").addEventListener("submit", async (e) => {
-                e.preventDefault();
-                const email = document.getElementById("signin-email").value;
-                const password = document.getElementById("signin-password").value;
-                await signIn(email, password);
+            document.getElementById("heart").addEventListener("click", () => {
+                displayHeartbeat();
+                sendHeartbeat(auth.currentUser.uid);
             });
-
-            const noteInput = document.getElementById("note-input");
-
-            noteInput.addEventListener("input", () => {
-                noteInput.style.height = "auto"; // Reset height to auto to measure scrollHeight
-                noteInput.style.height = `${noteInput.scrollHeight}px`; // Set height to scrollHeight
-            });
-
-            // Function to show the heart when notes are displayed
-            function showHeart() {
-                const heartContainer = document.getElementById('heart-container');
-                heartContainer.classList.add('show-heart');
-            }
-
-            // Add this function to send heartbeats to Firestore
-            async function sendHeartbeat() {
-                if (auth.currentUser) {
-                    await addDoc(collection(db, "heartbeats"), {
-                        sender: auth.currentUser.uid,
-                        timestamp: new Date(),
-                    });
-                }
-            }
-
-            let isAnimating = false; // Flag to track animation state
-
-            // Reusable function to visually display the heartbeat
-            function displayHeartbeat() {
-                const heart = document.getElementById("heart");
-
-                if (!isAnimating) { // Only allow click if not animating
-                    isAnimating = true; // Set the flag to true
-                    heart.classList.add("beat"); // Trigger the beat animation
-
-                    setTimeout(() => {
-                        heart.classList.remove("beat"); // Remove the class after the animation
-                        isAnimating = false; // Reset the flag after animation is done
-                    }, 500); // Adjust timing based on your animation duration
-                }
-            }
-
-            // Click event for the heart
-            document.getElementById("heart").addEventListener("touchstart", async (e) => {
-                {
-                    document.getElementById("heart").classList.add("shrink");
-                }
-            });
-
-            // Click event for the heart
-            document.getElementById("heart").addEventListener("touchend", async (e) => {
-                {
-                    document.getElementById("heart").classList.remove("shrink");
-                    displayHeartbeat(); // Trigger heartbeat animation
-                    await sendHeartbeat(); // Send the heartbeat to Firestore
-                }
-            });
-
-            // Function to listen for heartbeats from Firestore
-            function listenForHeartbeats() {
-                const heartbeatsRef = collection(db, "heartbeats");
-                
-                onSnapshot(heartbeatsRef, (snapshot) => {
-                    snapshot.docChanges().forEach((change) => {
-                        if (change.type === "added") {
-                            const heartbeat = change.doc.data();
-                            
-                            // Check if the heartbeat is from the other user
-                            if (heartbeat.sender !== auth.currentUser.uid) {
-                                displayHeartbeat(); // Show the heartbeat from the other user
-                            }
-                        }
-                    });
-                });
-            }
-
-            // Call this function on load
-            listenForHeartbeats();
-
-            async function cleanupOldHeartbeats() {
-                const heartbeatsRef = collection(db, "heartbeats");
-                const querySnapshot = await getDocs(heartbeatsRef);
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const timestamp = data.timestamp.toDate();
-                    const now = new Date();
-                    const fiveSecondsAgo = new Date(now - 5000);
-
-                    if (timestamp < fiveSecondsAgo) {
-                        // Delete old heartbeats
-                        deleteDoc(doc.ref);
-                    }
-                });
-            }
-
-            // Call this function on load to clean up old heartbeats
-            cleanupOldHeartbeats();
-
-
-            // Optional: Display the heart container based on some condition (like a user action)
-            document.getElementById("heart-container").style.display = "flex"; // Show the heart
-
-            /////////////////
-            // NOTIFICATIONS
-            /////////////////
-            // Example function to generate a random time in the day (e.g., between 9 AM to 6 PM)
-            function getRandomTime() {
-                const startHour = 9;
-                const endHour = 18;
-                const randomHour = Math.floor(Math.random() * (endHour - startHour)) + startHour;
-                const randomMinute = Math.floor(Math.random() * 60);
-                
-                return new Date().setHours(randomHour, randomMinute, 0, 0); // Random time for notification
-            }
-
-            // Function to schedule reminders for a user
-
-            const functions = require('firebase-functions');
-            const admin = require('firebase-admin');
-            admin.initializeApp();
-
-            // Function to send notification
-            exports.sendNotificationAtTime = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
-            const users = await getAllUsers(); // Retrieve all users from your database
-            
-            users.forEach(user => {
-                const randomTime = getRandomTime();
-                // Schedule notification for the user
-                scheduleReminder(user.id, randomTime);
-            });
-            });
-
-            // Helper to send notification
-            function sendNotificationAtTime(userId, time) {
-            const message = {
-                notification: {
-                title: "Reminder",
-                body: "Don't forget to check or send a note today!",
-                },
-                token: userId, // Assuming you're using FCM tokens to identify users
-                scheduledDeliveryTime: time
-            };
-
-            return admin.messaging().send(message).then(response => {
-                console.log("Successfully sent notification:", response);
-            }).catch(error => {
-                console.error("Error sending notification:", error);
-            });
-            }
-
-            // Request notification permission
-            if ('Notification' in window && navigator.serviceWorker) {
-                Notification.requestPermission(status => {
-                    if (status === 'granted') {
-                        // User granted permission
-                        console.log("Notification permission granted.");
-                        // Register service worker for receiving notifications
-                        navigator.serviceWorker.register('/service-worker.js').then(reg => {
-                            console.log("Service Worker registered.");
-                        });
-                    }
-                });
-            }
-
-
-            self.addEventListener('push', function(event) {
-                const data = event.data.json();
-                const options = {
-                    body: data.body,
-                    icon: '/icon.png',
-                };
-
-                event.waitUntil(
-                    self.registration.showNotification(data.title, options)
-                );
-            });
-
-
-            function scheduleReminder(userId) {
-                const randomTime = getRandomTime();
-                
-                // Schedule notification to send at the random time using Firebase Cloud Functions or a cron job
-                sendNotificationAtTime(userId, randomTime);
-            }
-
         </script>
         
     </body>
