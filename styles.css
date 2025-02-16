@@ -24,6 +24,21 @@ body {
     z-index: 1; /* Set below the content but above the body background */
 }
 
+.particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2; /* Ensure particles are below the notes */
+    pointer-events: none; /* Prevent interaction */
+    opacity: 0; /* Start hidden */
+    transition: opacity 2s ease-in-out; /* Transition for fading */
+}
+
+.show-particles {
+    opacity: 1; /* Fade in */
+}
 
 h2 {
     margin: 20px 0;
@@ -70,7 +85,7 @@ h2 {
     max-width: 500px; /* Set a max width for larger screens */
     margin: 20px 0; /* Add vertical spacing */
     text-align: center; /* Center text */
-    z-index: 2;
+    z-index: 3;
     opacity: 0;
 }
 
@@ -91,6 +106,8 @@ h2 {
 
 #notes-container {
     width: auto;
+    position: relative;
+    z-index: 3; /* Ensure notes are above the particles */
 }
 
 #auth-container {
@@ -188,8 +205,8 @@ button {
     border: 1px solid #4A0C15; /* Deep red/purple */
     border-radius: 15px;
     padding: 20px; /* Increased padding for a more spacious feel */
-    margin: 10px 0; /* Space between notes */
-    width: 100%; /* Full width for notes */
+    margin: 10px 20px; /* Add space on the sides */
+    width: calc(100% - 40px); /* Adjust width to account for margins */
     box-sizing: border-box; /* Include padding and border */
     font-size: x-large;
     z-index: 2;
@@ -197,7 +214,6 @@ button {
     animation: slideInUp 2s ease-out; /* Keep your existing animation */
     font-family: Brush Script MT, Brush Script Std, cursive; /* Handwritten-style font */
     position: relative; /* For pseudo-elements */
-    
     white-space: pre-wrap; /* Preserve line breaks */
     word-wrap: break-word; /* Ensure long words wrap to the next line */
     overflow-wrap: break-word; /* Break long words */
@@ -310,6 +326,7 @@ button {
 
 .show-heart #heart {
     opacity: 1;
+    transition: opacity 1s ease-in; /* Ensure fade-in transition */
 }
 
 .no-select{
