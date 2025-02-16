@@ -61,7 +61,7 @@
             import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js";
             import { signUp, signIn, checkAuthState } from './auth.js';
             import { saveUser, addNote, getNotes, getSenderName, markAsRead, sendHeartbeat, listenForHeartbeats, cleanupOldHeartbeats } from './firestore.js';
-            import { showContainer, showHeart, displayHeartbeat, createLoveHearts, fadeOutHearts } from './ui.js';
+            import { showContainer, showHeart, displayHeartbeat, createNoteParticles, fadeOutNoteParticles } from './ui.js';
 
             const auth = getAuth();
             const db = getFirestore();
@@ -132,7 +132,7 @@
                 gradientOverlay.style.opacity = 0;
 
                 // Fade out the hearts
-                fadeOutHearts();
+                fadeOutNoteParticles();
 
                 setTimeout(() => {
                     location.reload();
@@ -257,10 +257,10 @@
 
             const moodGradients = {
                 happy: "linear-gradient(to top, #ffec61, #ffb74d)", // Yellow to light orange
-                sad: "linear-gradient(to top, #4a90e2, #a3c4e3)", // Blue to light blue
-                excited: "linear-gradient(to top, #ff7e5f, #feb47b)", // Coral to peach
+                sad: "linear-gradient(to top, #2860bd, #546ac9)", // Blue to light blue
+                excited: "linear-gradient(to top, #ff5c4a, #d09938)", // Coral to peach
                 romantic: "linear-gradient(to top, #FF69B4, #c23c32)", // Pink to red
-                thoughtful: "linear-gradient(to top, #6a5acd, #d1c4e9)", // Slate blue to light lavender
+                thoughtful: "linear-gradient(to top, #6a5acd, #a978ff)", // Slate blue to light lavender
                 hot: "linear-gradient(to top, #750e0e, #800832)", // Red to purpley red
                 demon: "linear-gradient(to top, #d81111, #a30000)", // Bright red to dark red
                 default: "linear-gradient(to top, #f0f0f0, #ffffff)" // Light gray gradient
@@ -293,12 +293,7 @@
                             document.getElementById("notes-container").appendChild(noteElement);
 
                             // Trigger mood-specific animations
-                            if (note.mood === 'romantic') {
-                                createLoveHearts();
-                            } else {
-                                // Fade out the particles if not romantic
-                                fadeOutHearts();
-                            }
+                            createNoteParticles(note.mood);
                         }, 1000); // Match this to the fade-out duration
                     }
                 } catch (error) {
@@ -316,7 +311,7 @@
                 gradientOverlay.style.opacity = 0; // Fade out the gradient overlay
 
                 // Fade out the hearts
-                fadeOutHearts();
+                fadeOutNoteParticles();
 
                 // Remove the note from the DOM after the animation completes
                 noteElement.addEventListener('animationend', () => {
