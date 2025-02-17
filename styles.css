@@ -380,33 +380,23 @@ button:hover {
 
 .love-meter-container {
     position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 200px;
-    height: 30px;
-    background-color: #fff; /* White background */
-    border: 2px solid #4A0C15; /* Deep red/purple border */
-    border-radius: 15px;
-    overflow: hidden;
-    z-index: 3;
-}
-
-.love-meter-container {
-    position: fixed;
-    top: 10px;
+    top: 30px;
     left: 50%;
     transform: translateX(-50%);
     width: 80%; /* Span across 80% of the screen width */
-    height: 10px;
+    height: 10px; /* Increase height to accommodate initials */
     background-color: #e0e0e0; /* Light grey background */
     border-radius: 5px;
-    overflow: hidden;
+    overflow: visible;
     z-index: 3;
+    display: flex;
+    align-items: center;
+    transition: opacity 1s ease-in-out; /* Add transition for fading */
 }
 
 .love-meter {
     width: 100%;
-    height: 100%;
+    height: 10px; /* Adjust height for the bar */
     background-color: #e0e0e0; /* Light grey background */
     border-radius: 5px;
     overflow: hidden;
@@ -415,7 +405,33 @@ button:hover {
 
 .love-meter-fill {
     height: 100%;
-    background-color: #FF69B4; /* Pink fill color */
-    width: 0;
     transition: width 0.5s ease-in-out;
+    position: absolute;
+}
+
+.partner-fill {
+    background-color: #4A90E2; /* Blue fill color for partner */
+    left: 0;
+}
+
+.love-meter-fill:not(.partner-fill) {
+    background-color: #FF69B4; /* Pink fill color */
+    right: 0;
+}
+
+.initial {
+    font-size: 14px;
+    font-weight: bold;
+    color: #4A0C15; /* Deep red/purple text color */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#my-initial {
+    left: -22.5px; /* Position on the left */
+}
+
+#partner-initial {
+    right: -25px; /* Position on the right */
 }

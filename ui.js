@@ -107,13 +107,34 @@ export function fadeOutNoteParticles() {
     particlesContainer.classList.add('fade-out');
 }
 
-import { getNotesSentCount } from './firestore.js';
+import { getNotesSentCountByUser, getNotesSentCountByUserInLast7Days } from './firestore.js';
 
-export async function updateLoveMeter(userId) {
-    const count = await getNotesSentCount(userId);
-    const loveMeterFill = document.getElementById('love-meter-fill');
-    const maxNotes = 1000; // Define the maximum number of notes for the meter to be full
+const myUserId = 'DvRrCAPAoDb4Mz3adWZllPFKJ8U2';
+const partnerUserId = 'VSAGQ2iFO9NdHL9EafMVY6xUw0k1';
 
-    const percentage = Math.min((count / maxNotes) * 100, 100);
-    loveMeterFill.style.width = `${percentage}%`;
+export async function updateLoveMeter() {
+    const myCount = await getNotesSentCountByUserInLast7Days(myUserId);
+    const partnerCount = await getNotesSentCountByUserInLast7Days(partnerUserId);
+    const myLoveMeterFill = document.getElementById('my-love-meter-fill');
+    const partnerLoveMeterFill = document.getElementById('partner-love-meter-fill');
+    const totalNotes = myCount + partnerCount;
+
+    const myPercentage = (myCount / totalNotes) * 100;
+    const partnerPercentage = (partnerCount / totalNotes) * 100;
+
+    myLoveMeterFill.style.width = `${myPercentage}%`;
+    partnerLoveMeterFill.style.width = `${partnerPercentage}%`;
+}
+
+// Add fade-in and fade-out functionality for the love meter
+export function fadeInLoveMeter() {
+    const loveMeterContainer = document.getElementById('love-meter-container');
+    loveMeterContainer.classList.remove('fade-out');
+    loveMeterContainer.classList.add('fade-in');
+}
+
+export function fadeOutLoveMeter() {
+    const loveMeterContainer = document.getElementById('love-meter-container');
+    loveMeterContainer.classList.remove('fade-in');
+    loveMeterContainer.classList.add('fade-out');
 }

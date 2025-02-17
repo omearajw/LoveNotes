@@ -54,10 +54,13 @@
 
         <div id="particles-js" class="particles-js"></div>
 
-        <div id="love-meter-container" class="love-meter-container">
+        <div id="love-meter-container" class="love-meter-container fade-out">
             <div id="love-meter" class="love-meter">
-                <div id="love-meter-fill" class="love-meter-fill"></div>
+                <div id="my-love-meter-fill" class="love-meter-fill partner-fill"></div>
+                <div id="partner-love-meter-fill" class="love-meter-fill"></div>
             </div>
+            <div id="my-initial" class="initial">J</div>
+            <div id="partner-initial" class="initial">E</div>
         </div>
     
         <!-- Firebase SDK -->
@@ -67,7 +70,7 @@
             import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js";
             import { signUp, signIn, checkAuthState } from './auth.js';
             import { saveUser, addNote, getNotes, getSenderName, markAsRead, sendHeartbeat, listenForHeartbeats, cleanupOldHeartbeats } from './firestore.js';
-            import { showContainer, showHeart, displayHeartbeat, createNoteParticles, fadeOutNoteParticles, updateLoveMeter } from './ui.js';
+            import { showContainer, showHeart, displayHeartbeat, createNoteParticles, fadeOutNoteParticles, updateLoveMeter, fadeOutLoveMeter, fadeInLoveMeter } from './ui.js';
 
             const auth = getAuth();
             const db = getFirestore();
@@ -140,6 +143,8 @@
                 // Fade out the hearts
                 fadeOutNoteParticles();
 
+                fadeOutLoveMeter();
+
                 setTimeout(() => {
                     location.reload();
                     console.log("Page refreshed");
@@ -161,6 +166,7 @@
                         } else {
                             document.getElementById("notes-container").style.display = "none";
                             showHeart();
+                            fadeInLoveMeter();
                             document.getElementById("form-container").style.display = "block";
                             showContainer(document.getElementById("form-container"));
                         }
@@ -221,6 +227,8 @@
                 noteInput.classList.remove("slide-up-reset");
                 noteInput.classList.add("slide-up");
 
+                fadeOutLoveMeter();
+
                 setTimeout(async () => {
                     await addNote(note, selectedMood, auth.currentUser.uid);
 
@@ -242,6 +250,7 @@
                         noteInput.disabled = false;
                         sendButton.disabled = false;
                         moodButtons.forEach(button => button.disabled = false);
+                        fadeInLoveMeter();
                     }, 1000);
 
                     await updateLoveMeter(auth.currentUser.uid); // Update the love meter after adding a note

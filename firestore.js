@@ -98,7 +98,8 @@ export async function cleanupOldHeartbeats() {
     });
 }
 
-export async function getNotesSentCount(userId) {
+// Use for the Love Meter feature in the UI to get the number of notes sent by a user
+export async function getNotesSentCountByUser(userId) {
     const querySnapshot = await getDocs(collection(db, "notes"));
     let count = 0;
     querySnapshot.forEach((doc) => {
@@ -110,3 +111,20 @@ export async function getNotesSentCount(userId) {
     return count;
 }
 
+
+// Use for the Love Meter feature in the UI to get the number of notes sent by a user in the last 7 days
+export async function getNotesSentCountByUserInLast7Days(userId) {
+    const querySnapshot = await getDocs(collection(db, "notes"));
+    let count = 0;
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
+
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const timestamp = data.timestamp.toDate();
+        if (data.sender === userId && timestamp >= sevenDaysAgo) {
+            count++;
+        }
+    });
+    return count;
+}
