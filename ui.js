@@ -107,7 +107,7 @@ export function fadeOutNoteParticles() {
     particlesContainer.classList.add('fade-out');
 }
 
-import { getNotesSentCountByUser, getNotesSentCountByUserInLast7Days } from './firestore.js';
+import { getNotesSentCountByUser, getNotesSentCountByUserInLast7Days, getMostUsedMood, getMostUsedMoodInLast7Days } from './firestore.js';
 
 const myUserId = 'DvRrCAPAoDb4Mz3adWZllPFKJ8U2';
 const partnerUserId = 'VSAGQ2iFO9NdHL9EafMVY6xUw0k1';
@@ -138,3 +138,93 @@ export function fadeOutLoveMeter() {
     loveMeterContainer.classList.remove('fade-in');
     loveMeterContainer.classList.add('fade-out');
 }
+
+// Capitalize the first letter of a string
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// Show stats popup
+async function showStats(userId, statsElement) {
+    const totalNotes = await getNotesSentCountByUser(userId);
+    const notesLast7Days = await getNotesSentCountByUserInLast7Days(userId);
+    let mostUsedMood = await getMostUsedMood(userId);
+    let currentFavoriteMood = await getMostUsedMoodInLast7Days(userId);
+    mostUsedMood = capitalizeFirstLetter(mostUsedMood);
+    currentFavoriteMood = capitalizeFirstLetter(currentFavoriteMood);
+
+    statsElement.innerHTML = `
+        <p><b>Recently</b></p>
+        <p>Sent ${notesLast7Days} Notes</p>
+        <p>Favourite mood is ${currentFavoriteMood}</p>
+        <p><b>Overall</b></p>
+        <p>Sent ${totalNotes} Notes</p>
+        <p>Favourite mood is ${mostUsedMood}</p>
+    `;
+    statsElement.style.display = 'block';
+    statsElement.style.opacity = '1'; // Ensure visibility
+
+    // Adjust position to ensure it stays on screen
+    const rect = statsElement.getBoundingClientRect();
+    if (rect.right > window.innerWidth) {
+        statsElement.style.left = 'auto';
+        statsElement.style.right = '0';
+        statsElement.style.transform = 'translateX(-50%)';
+    }
+    if (rect.left < 0) {
+        statsElement.style.left = '0';
+        statsElement.style.right = 'auto';
+        statsElement.style.transform = 'translateX(50%)';
+    }
+
+    // Apply slide-in animation
+    if (statsElement.id === 'my-stats') {
+        statsElement.style.animation = 'slideInFromLeft 0.5s forwards';
+    } else if (statsElement.id === 'partner-stats') {
+        statsElement.style.animation = 'slideInFromRight 0.5s forwards';
+    }
+}
+
+// Hide stats popup
+export function hideStats(statsElement) {
+    if (statsElement.id === 'my-stats') {
+        statsElement.style.animation = 'slideOutToLeft 0.5s forwards';
+    } else if (statsElement.id === 'partner-stats') {
+        statsElement.style.animation = 'slideOutToRight 0.5s forwards';
+    }
+    setTimeout(() => {
+        statsElement.style.display = 'none';
+        statsElement.style.animation = ''; // Reset animation
+    }, 500); // Match the duration of the animation
+}
+
+// Event listener for love meter
+document.getElementById('love-meter').addEventListener('click', (event) => {
+    event.stopPropagation();
+    const myStatsElement = document.getElementById('my-stats');
+    const partnerStatsElement = document.getElementById('partner-stats');
+
+    showStats(myUserId, myStatsElement);
+    showStats(partnerUserId, partnerStatsElement);
+});
+
+// Event listeners for initials
+document.getElementById('my-initial').addEventListener('click', (event) => {
+    event.stopPropagation();
+    const statsElement = document.getElementById('my-stats');
+    if (statsElement.style.display === 'none' || statsElement.style.opacity === '0') {
+        showStats(myUserId, statsElement);
+    } else {
+        hideStats(statsElement);
+    }
+});
+
+document.getElementById('partner-initial').addEventListener('click', (event) => {
+    event.stopPropagation();
+    const statsElement = document.getElementById('partner-stats');
+    if (statsElement.style.display === 'none' || statsElement.style.opacity === '0') {
+        showStats(partnerUserId, statsElement);
+    } else {
+        hideStats(statsElement);
+    }
+});

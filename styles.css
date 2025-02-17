@@ -119,6 +119,7 @@ textarea {
     overflow: hidden; /* Disable scroll */
     background-color: #fff; /* White background */
     color: #4A0C15; /* Deep red/purple text color */
+    box-shadow: 4px 4px 0px 0px #660000; /* Dark red shadow */
 }
 
 #form-container {
@@ -135,10 +136,10 @@ textarea:focus {
     display: flex;
     justify-content: center; /* Center mood buttons */
     flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-    margin-top: 10px; /* Add some spacing above */
     max-width: 245px;
     min-width: 245px;
     transition: opacity 0.1s ease;
+    padding-top: 7px;
     margin: auto;
 }
 
@@ -154,24 +155,67 @@ textarea:focus {
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.15));
     transition: background-color 0.3s ease, transform 0.2s ease;
     font-size: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#happy-button {
+    background-color: rgb(226, 211, 96);
+    color: black;
+    box-shadow: 4px 4px 0px 0px rgb(204, 190, 86); /* Slightly darker shadow */
+}
+
+#sad-button {
+    background-color: rgb(36, 36, 108);
+    box-shadow: 4px 4px 0px 0px rgb(26, 26, 82); /* Slightly darker shadow */
+}
+
+#excited-button {
+    background-color: rgb(255, 151, 31);
+    box-shadow: 4px 4px 0px 0px rgb(199, 116, 21); /* Slightly darker shadow */
+}
+
+#romantic-button {
+    background-color: rgb(164, 41, 100);
+    box-shadow: 4px 4px 0px 0px rgb(117, 29, 72); /* Slightly darker shadow */
+}
+
+#thoughtful-button {
+    background-color: rgb(112, 19, 112);
+    box-shadow: 4px 4px 0px 0px rgb(83, 13, 83); /* Slightly darker shadow */
+}
+
+#hot-button {
+    background-color: rgb(101, 9, 37);
+    box-shadow: 4px 4px 0px 0px rgb(68, 5, 24); /* Slightly darker shadow */
+}
+
+#demon-button {
+    background-color: rgb(180, 0, 0);
+    box-shadow: 4px 4px 0px 0px rgb(126, 0, 0); /* Slightly darker shadow */
 }
 
 .mood-button:hover {
-    background-color: #333; /* Darken on hover */
-    filter:saturate(80%);
+    filter: saturate(80%);
     filter: brightness(80%);
 }
 
 .mood-button.selected {
-    filter:saturate(300%);
+    filter: saturate(300%);
     filter: brightness(125%);
     transform: scale(1.05); /* Slightly enlarge */
 }
 
 .mood-button-text {
     margin: 0px;
-    /* padding-bottom: 7px; */
+    margin-bottom: 3px;
     align-self: center;
+}
+
+#send-button {
+    box-shadow: 4px 4px 0px 0px #660000; /* Dark red shadow */
+    width: calc(100% - 175px);
 }
 
 button {
@@ -310,13 +354,21 @@ button:hover {
     align-items: center;
     pointer-events: auto; /* Prevent blocking clicks on the heart */
     z-index: 1; /* Set a lower z-index */
-    filter: drop-shadow(0 0 10px rgba(1,1,1,0.15));
+    filter: drop-shadow(0 0 5px rgba(1,1,1,0.15));
     padding: 100px;
 }
 
 #heart {
     opacity: 0;
     transition: transform 2s ease-in, filter 2s ease, opacity 2s ease;
+    stroke: #660000;
+    stroke-width: 1px;
+    fill: none;
+    /* filter: drop-shadow(4px 4px 0px #660000); */
+}
+
+#heart-path {
+    pointer-events: auto; /* Allow interaction with the heart */
 }
 
 .show-heart #heart {
@@ -392,6 +444,7 @@ button:hover {
     display: flex;
     align-items: center;
     transition: opacity 1s ease-in-out; /* Add transition for fading */
+    box-shadow: 4px 4px 0px 0px #660000; /* Dark red shadow */
 }
 
 .love-meter {
@@ -434,4 +487,80 @@ button:hover {
 
 #partner-initial {
     right: -25px; /* Position on the right */
+}
+
+.stats-popup {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #4A0C15; /* Deep red/purple border */
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 4px 4px 0px 0px #660000; /* Dark red shadow */
+    z-index: 4;
+    min-width: 100px;
+    max-width: 180px;
+    width: auto;
+    font-size: 12px;
+    color: #4A0C15; /* Deep red/purple text color */
+    top: 25px; /* Position below the initials */
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.5s ease-in-out; /* Add transition for fading */
+}
+
+#my-stats {
+    left: 0;
+    transform: translateX(-50%);
+}
+
+#partner-stats {
+    right: 0;
+    transform: translateX(50%);
+}
+
+/* Keyframes for sliding in from the left */
+@keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+/* Keyframes for sliding in from the right */
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+}
+
+/* Keyframes for sliding out to the left */
+@keyframes slideOutToLeft {
+    0% {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+/* Keyframes for sliding out to the right */
+@keyframes slideOutToRight {
+    0% {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }

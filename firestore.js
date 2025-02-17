@@ -128,3 +128,57 @@ export async function getNotesSentCountByUserInLast7Days(userId) {
     });
     return count;
 }
+
+export async function getMostUsedMood(userId) {
+    const querySnapshot = await getDocs(collection(db, "notes"));
+    const moodCount = {};
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.sender === userId) {
+            const mood = data.mood;
+            if (moodCount[mood]) {
+                moodCount[mood]++;
+            } else {
+                moodCount[mood] = 1;
+            }
+        }
+    });
+    let mostUsedMood = null;
+    let maxCount = 0;
+    for (const mood in moodCount) {
+        if (moodCount[mood] > maxCount) {
+            maxCount = moodCount[mood];
+            mostUsedMood = mood;
+        }
+    }
+    return mostUsedMood;
+}
+
+export async function getMostUsedMoodInLast7Days(userId) {
+    const querySnapshot = await getDocs(collection(db, "notes"));
+    const moodCount = {};
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
+
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const timestamp = data.timestamp.toDate();
+        if (data.sender === userId && timestamp >= sevenDaysAgo) {
+            const mood = data.mood;
+            if (moodCount[mood]) {
+                moodCount[mood]++;
+            } else {
+                moodCount[mood] = 1;
+            }
+        }
+    });
+    let mostUsedMood = null;
+    let maxCount = 0;
+    for (const mood in moodCount) {
+        if (moodCount[mood] > maxCount) {
+            maxCount = moodCount[mood];
+            mostUsedMood = mood;
+        }
+    }
+    return mostUsedMood;
+}

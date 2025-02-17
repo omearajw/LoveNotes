@@ -35,20 +35,20 @@
             <form id="note-form">
                 <textarea id="note-input" placeholder="Write your note here..." required></textarea>
                 <div class="mood-buttons no-select">
-                    <button type="button" class="mood-button no-select" data-mood="happy" style="background-color:rgb(226, 211, 96); color: black;"><p class="mood-button-text">😊</p></button>
-                    <button type="button" class="mood-button no-select" data-mood="sad" style="background-color: rgb(36, 36, 108);"><p class="mood-button-text">😔</p></button>
-                    <button type="button" class="mood-button no-select" data-mood="excited" style="background-color: rgb(255, 151, 31);"><p class="mood-button-text">😁</p></button>
-                    <button type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(164, 41, 100);"><p class="mood-button-text">😍</p></button>
-                    <button type="button" class="mood-button no-select" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);"><p class="mood-button-text">🤔</p></button>
-                    <button type="button" class="mood-button no-select" data-mood="hot" style="background-color: rgb(101, 9, 37);"><p class="mood-button-text">😏</p></button>
-                    <button type="button" class="mood-button no-select" data-mood="demon" style="background-color: rgb(180, 0, 0);"><p class="mood-button-text">👹</p></button>
+                    <button id="happy-button" type="button" class="mood-button no-select" data-mood="happy" style="background-color:rgb(226, 211, 96); color: black;"><p class="mood-button-text">😊</p></button>
+                    <button id="sad-button" type="button" class="mood-button no-select" data-mood="sad" style="background-color: rgb(36, 36, 108);"><p class="mood-button-text">😔</p></button>
+                    <button id="excited-button" type="button" class="mood-button no-select" data-mood="excited" style="background-color: rgb(255, 151, 31);"><p class="mood-button-text">😁</p></button>
+                    <button id="romantic-button" type="button" class="mood-button no-select" data-mood="romantic" style="background-color: rgb(164, 41, 100);"><p class="mood-button-text">😍</p></button>
+                    <button id="thoughtful-button" type="button" class="mood-button no-select" data-mood="thoughtful" style="background-color: rgb(112, 19, 112);"><p class="mood-button-text">🤔</p></button>
+                    <button id="hot-button" type="button" class="mood-button no-select" data-mood="hot" style="background-color: rgb(101, 9, 37);"><p class="mood-button-text">😏</p></button>
+                    <button id="demon-button" type="button" class="mood-button no-select" data-mood="demon" style="background-color: rgb(180, 0, 0);"><p class="mood-button-text">👹</p></button>
                 </div>
                 <button id="send-button" type="submit">Send Note</button>
             </form>
         </div>
         <div id="heart-container" class="no-select" style="display: none;">
-            <svg id="heart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="600" height="600" style="fill: white; cursor: pointer;">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            <svg id="heart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="550" height="550" style="fill: white; cursor: pointer;">
+                <path id="heart-path" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
         </div>
 
@@ -61,6 +61,8 @@
             </div>
             <div id="my-initial" class="initial">J</div>
             <div id="partner-initial" class="initial">E</div>
+            <div id="my-stats" class="stats-popup" style="display: none;"></div>
+            <div id="partner-stats" class="stats-popup" style="display: none;"></div>
         </div>
     
         <!-- Firebase SDK -->
@@ -70,7 +72,7 @@
             import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js";
             import { signUp, signIn, checkAuthState } from './auth.js';
             import { saveUser, addNote, getNotes, getSenderName, markAsRead, sendHeartbeat, listenForHeartbeats, cleanupOldHeartbeats } from './firestore.js';
-            import { showContainer, showHeart, displayHeartbeat, createNoteParticles, fadeOutNoteParticles, updateLoveMeter, fadeOutLoveMeter, fadeInLoveMeter } from './ui.js';
+            import { showContainer, showHeart, displayHeartbeat, createNoteParticles, fadeOutNoteParticles, updateLoveMeter, fadeOutLoveMeter, fadeInLoveMeter, hideStats } from './ui.js';
 
             const auth = getAuth();
             const db = getFirestore();
@@ -120,6 +122,21 @@
                     icon: payload.notification.icon
                 };
                 new Notification(notificationTitle, notificationOptions);
+            });
+
+            document.addEventListener('click', (event) => {
+                const myStats = document.getElementById('my-stats');
+                const partnerStats = document.getElementById('partner-stats');
+                const myInitial = document.getElementById('my-initial');
+                const partnerInitial = document.getElementById('partner-initial');
+
+                if (!myInitial.contains(event.target) && !myStats.contains(event.target)) {
+                    hideStats(myStats);
+                }
+
+                if (!partnerInitial.contains(event.target) && !partnerStats.contains(event.target)) {
+                    hideStats(partnerStats);
+                }
             });
 
             document.getElementById("refresh-button").addEventListener("click", () => {
@@ -369,7 +386,7 @@
                 this.style.height = (this.scrollHeight) + "px";
             });
 
-            document.getElementById("heart").addEventListener("click", () => {
+            document.getElementById("heart-path").addEventListener("click", () => {
                 displayHeartbeat();
                 sendHeartbeat(auth.currentUser.uid);
             });
