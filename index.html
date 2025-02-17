@@ -51,7 +51,6 @@
                 <path id="heart-path" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
         </div>
-
         <div id="particles-js" class="particles-js"></div>
 
         <div id="love-meter-container" class="love-meter-container fade-out">
@@ -82,47 +81,47 @@
             let currentIndex = 0;
             let selectedMood = "";
 
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/LoveNotes/service-worker.js')
-                    .then((registration) => {
-                        console.log('Service Worker registered with scope:', registration.scope);
-                    }, (err) => {
-                        console.log('Service Worker registration failed:', err);
-                    });
-                });
-            }
+            // if ('serviceWorker' in navigator) {
+            //     window.addEventListener('load', () => {
+            //         navigator.serviceWorker.register('/LoveNotes/service-worker.js')
+            //         .then((registration) => {
+            //             console.log('Service Worker registered with scope:', registration.scope);
+            //         }, (err) => {
+            //             console.log('Service Worker registration failed:', err);
+            //         });
+            //     });
+            // }
 
-            async function requestNotificationPermission() {
-                try {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted') {
-                        console.log('Notification permission granted.');
-                        const token = await getToken(messaging, { vapidKey: 'BJRfxIYGCZvdn_quwWZHJHr-iJJ-0tsuCSNDoedK0SEPfRAjv0bDxMKxHKxYcGDRd0QV_u6AVTT19NpR_Mfc2Zk' });
-                        if (token) {
-                            console.log('FCM Token:', token);
-                        } else {
-                            console.log('No registration token available.');
-                        }
-                    } else {
-                        console.log('Notification permission denied.');
-                    }
-                } catch (error) {
-                    console.error('Error getting notification permission:', error);
-                }
-            }
+            // async function requestNotificationPermission() {
+            //     try {
+            //         const permission = await Notification.requestPermission();
+            //         if (permission === 'granted') {
+            //             console.log('Notification permission granted.');
+            //             const token = await getToken(messaging, { vapidKey: 'BJRfxIYGCZvdn_quwWZHJHr-iJJ-0tsuCSNDoedK0SEPfRAjv0bDxMKxHKxYcGDRd0QV_u6AVTT19NpR_Mfc2Zk' });
+            //             if (token) {
+            //                 console.log('FCM Token:', token);
+            //             } else {
+            //                 console.log('No registration token available.');
+            //             }
+            //         } else {
+            //             console.log('Notification permission denied.');
+            //         }
+            //     } catch (error) {
+            //         console.error('Error getting notification permission:', error);
+            //     }
+            // }
 
-            requestNotificationPermission();
+            // requestNotificationPermission();
 
-            onMessage(messaging, (payload) => {
-                console.log('Message received. ', payload);
-                const notificationTitle = payload.notification.title;
-                const notificationOptions = {
-                    body: payload.notification.body,
-                    icon: payload.notification.icon
-                };
-                new Notification(notificationTitle, notificationOptions);
-            });
+            // onMessage(messaging, (payload) => {
+            //     console.log('Message received. ', payload);
+            //     const notificationTitle = payload.notification.title;
+            //     const notificationOptions = {
+            //         body: payload.notification.body,
+            //         icon: payload.notification.icon
+            //     };
+            //     new Notification(notificationTitle, notificationOptions);
+            // });
 
             document.addEventListener('click', (event) => {
                 const myStats = document.getElementById('my-stats');
@@ -386,8 +385,11 @@
                 this.style.height = (this.scrollHeight) + "px";
             });
 
+            // Event listener for heart click
             document.getElementById("heart-path").addEventListener("click", () => {
+                console.log("Heart clicked");
                 displayHeartbeat();
+                // Assuming sendHeartbeat is defined elsewhere
                 sendHeartbeat(auth.currentUser.uid);
             });
         </script>

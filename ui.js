@@ -17,10 +17,12 @@ export function showHeart() {
 
 export function displayHeartbeat() {
     const heart = document.getElementById("heart");
+    console.log("Adding 'beat' class to heart");
     heart.classList.add("beat");
     setTimeout(() => {
+        console.log("Removing 'beat' class from heart");
         heart.classList.remove("beat");
-    }, 500);
+    }, 600);
 }
 
 export async function createNoteParticles(mood) {

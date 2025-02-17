@@ -125,6 +125,7 @@ textarea {
 #form-container {
     transition: height 0.2s; /* Smooth transition for height changes */
     z-index: 2;
+    pointer-events: none; /* Disable interaction */
 }
 
 textarea:focus {
@@ -209,7 +210,7 @@ textarea:focus {
 
 .mood-button-text {
     margin: 0px;
-    margin-bottom: 3px;
+    margin-bottom: 1px;
     align-self: center;
 }
 
@@ -369,11 +370,12 @@ button:hover {
 
 #heart-path {
     pointer-events: auto; /* Allow interaction with the heart */
+    transition: transform 2s ease-in, filter 2s ease, opacity 2s ease;
 }
 
 .show-heart #heart {
     opacity: 1;
-    transition: opacity 1s ease-in; /* Ensure fade-in transition */
+    transition: transform 2s ease, filter 2s ease, opacity 1s ease;
 }
 
 .no-select{
@@ -396,7 +398,7 @@ button:hover {
 
 .beat {
     transform: scale(1.15); /* Scale the heart up */
-    filter: drop-shadow(0 0 100px rgb(135, 12, 12)); /* Red glow effect */
+    filter: drop-shadow(0 0 50px rgb(110, 0, 0)); /* Red glow effect */
 }
 
 /* Romantic note theme */
@@ -479,6 +481,7 @@ button:hover {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    user-select: none; /* Prevent text selection */
 }
 
 #my-initial {
