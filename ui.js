@@ -106,3 +106,14 @@ export function fadeOutNoteParticles() {
     particlesContainer.classList.remove('show-particles');
     particlesContainer.classList.add('fade-out');
 }
+
+import { getNotesSentCount } from './firestore.js';
+
+export async function updateLoveMeter(userId) {
+    const count = await getNotesSentCount(userId);
+    const loveMeterFill = document.getElementById('love-meter-fill');
+    const maxNotes = 1000; // Define the maximum number of notes for the meter to be full
+
+    const percentage = Math.min((count / maxNotes) * 100, 100);
+    loveMeterFill.style.width = `${percentage}%`;
+}

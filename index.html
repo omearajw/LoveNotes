@@ -53,6 +53,12 @@
         </div>
 
         <div id="particles-js" class="particles-js"></div>
+
+        <div id="love-meter-container" class="love-meter-container">
+            <div id="love-meter" class="love-meter">
+                <div id="love-meter-fill" class="love-meter-fill"></div>
+            </div>
+        </div>
     
         <!-- Firebase SDK -->
         <script type="module">
@@ -61,7 +67,7 @@
             import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js";
             import { signUp, signIn, checkAuthState } from './auth.js';
             import { saveUser, addNote, getNotes, getSenderName, markAsRead, sendHeartbeat, listenForHeartbeats, cleanupOldHeartbeats } from './firestore.js';
-            import { showContainer, showHeart, displayHeartbeat, createNoteParticles, fadeOutNoteParticles } from './ui.js';
+            import { showContainer, showHeart, displayHeartbeat, createNoteParticles, fadeOutNoteParticles, updateLoveMeter } from './ui.js';
 
             const auth = getAuth();
             const db = getFirestore();
@@ -140,11 +146,12 @@
                 }, 1000);
             });
 
-            checkAuthState((user) => {
+            checkAuthState(async (user) => {
                 if (user) {
                     document.getElementById("auth-container").style.display = "none";
                     document.getElementById("notes-container").style.display = "block";
                     showContainer(document.getElementById("notes-container"));
+                    await updateLoveMeter(user.uid); // Update the love meter on authentication
                     getNotes(user.uid).then((fetchedNotes) => {
                         console.log("Fetched notes:", fetchedNotes); // Debugging statement
                         notes = fetchedNotes;
@@ -236,6 +243,8 @@
                         sendButton.disabled = false;
                         moodButtons.forEach(button => button.disabled = false);
                     }, 1000);
+
+                    await updateLoveMeter(auth.currentUser.uid); // Update the love meter after adding a note
 
                     getNotes(auth.currentUser.uid).then((fetchedNotes) => {
                         console.log("Fetched notes after adding:", fetchedNotes); // Debugging statement

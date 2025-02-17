@@ -98,3 +98,15 @@ export async function cleanupOldHeartbeats() {
     });
 }
 
+export async function getNotesSentCount(userId) {
+    const querySnapshot = await getDocs(collection(db, "notes"));
+    let count = 0;
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.sender === userId) {
+            count++;
+        }
+    });
+    return count;
+}
+
