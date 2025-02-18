@@ -1,3 +1,5 @@
+import { getNotesSentCountByUser, getNotesSentCountByUserInLast7Days, getMostUsedMood, getMostUsedMoodInLast7Days, getAllNotes, getSenderName} from './firestore.js';
+
 export function showContainer(container) {
     container.style.display = "block";
     setTimeout(() => {
@@ -17,13 +19,71 @@ export function showHeart() {
 
 export function displayHeartbeat() {
     const heart = document.getElementById("heart");
-    console.log("Adding 'beat' class to heart");
     heart.classList.add("beat");
     setTimeout(() => {
-        console.log("Removing 'beat' class from heart");
         heart.classList.remove("beat");
     }, 600);
 }
+
+// Show history screen
+function showHistoryScreen() {
+    const historyScreen = document.getElementById('history-screen');
+    historyScreen.style.display = 'block'; // Ensure the history screen is displayed
+    setTimeout(() => {
+        historyScreen.classList.remove('hide');
+        historyScreen.classList.add('show');
+    }, 10); // Small delay to trigger the transition
+    loadNotesHistory();
+}
+
+// Hide history screen
+function hideHistoryScreen() {
+    const historyScreen = document.getElementById('history-screen');
+    historyScreen.classList.remove('show');
+    historyScreen.classList.add('hide');
+    setTimeout(() => {
+        historyScreen.style.display = 'none';
+    }, 500); // Match the duration of the transition
+}
+
+// Load notes history
+async function loadNotesHistory() {
+    const notesHistoryContainer = document.getElementById('notes-history');
+    notesHistoryContainer.innerHTML = ''; // Clear previous notes
+
+    // Fetch notes from your data source (e.g., Firebase)
+    const notes = await getAllNotes();
+
+    let currentMonth = '';
+    let currentYear = '';
+
+    for (const note of notes) {
+        const noteDate = new Date(note.timestamp.toDate());
+        const month = noteDate.toLocaleString('default', { month: 'long' });
+        const year = noteDate.getFullYear();
+
+        if (month !== currentMonth || year !== currentYear) {
+            currentMonth = month;
+            currentYear = year;
+            const monthLabel = document.createElement('div');
+            monthLabel.classList.add('month-label');
+            monthLabel.textContent = `${currentMonth} ${currentYear}`;
+            notesHistoryContainer.appendChild(monthLabel);
+        }
+
+        const senderName = await getSenderName(note.sender);
+        const noteElement = document.createElement('div');
+        noteElement.classList.add('note', note.mood); // Add mood class for styling
+        noteElement.innerHTML = `${note.content}<br><span class="sender-name">- ${senderName}</span>`;
+        notesHistoryContainer.appendChild(noteElement);
+    }
+}
+
+// Event listener for history button
+document.getElementById('history-button').addEventListener('click', showHistoryScreen);
+
+// Event listener for back button
+document.getElementById('back-button').addEventListener('click', hideHistoryScreen);
 
 export async function createNoteParticles(mood) {
     const moodParticles = {
@@ -108,8 +168,6 @@ export function fadeOutNoteParticles() {
     particlesContainer.classList.remove('show-particles');
     particlesContainer.classList.add('fade-out');
 }
-
-import { getNotesSentCountByUser, getNotesSentCountByUserInLast7Days, getMostUsedMood, getMostUsedMoodInLast7Days } from './firestore.js';
 
 const myUserId = 'DvRrCAPAoDb4Mz3adWZllPFKJ8U2';
 const partnerUserId = 'VSAGQ2iFO9NdHL9EafMVY6xUw0k1';

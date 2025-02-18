@@ -1,4 +1,4 @@
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, setDoc, getDoc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, setDoc, getDoc, onSnapshot, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 
 const firebaseConfig = {
@@ -21,7 +21,6 @@ export async function saveUser(user, name, email) {
         email: email,
         userId: user.uid
     });
-    console.log("User's name saved successfully.");
 }
 
 export async function addNote(note, mood, userId) {
@@ -53,7 +52,6 @@ export async function getSenderName(senderID) {
         const userData = userSnap.data();
         return userData.name;
     } else {
-        console.log('No such user!');
         return 'Unknown Sender';
     }
 }
@@ -181,4 +179,15 @@ export async function getMostUsedMoodInLast7Days(userId) {
         }
     }
     return mostUsedMood;
+}
+
+export async function getAllNotes() {
+    const notesQuery = query(collection(db, "notes"), orderBy("timestamp", "desc")); // Change to "asc" for ascending order
+    const querySnapshot = await getDocs(notesQuery);
+    const notes = [];
+    querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        notes.push({ id: doc.id, ...data });
+    });
+    return notes;
 }

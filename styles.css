@@ -237,7 +237,7 @@ button:hover {
 }
 
 .note {
-    background-color: #fffbe6; /* Light paper color */
+    background-color: #fffbe6;
     background-image: repeating-linear-gradient(
         to bottom,          /* Ensure lines go from top to bottom */
         white 0%,           /* White space for top portion */
@@ -329,8 +329,8 @@ button:hover {
 }
  
 .note.romantic {
-    border: 5px solid rgb(166, 0, 0);
-    filter: drop-shadow(0 0 10px rgba(166, 0, 0, 1));
+    border: 5px solid rgb(166, 0, 91);
+    filter: drop-shadow(0 0 10px rgba(166, 0, 91, 1));
 }
 
 .note.thoughtful {
@@ -500,10 +500,10 @@ button:hover {
     padding: 10px;
     box-shadow: 4px 4px 0px 0px #660000; /* Dark red shadow */
     z-index: 4;
-    min-width: 100px;
-    max-width: 180px;
+    min-width: 15%;
+    max-width: 45%;
     width: auto;
-    font-size: 12px;
+    font-size: 10px;
     color: #4A0C15; /* Deep red/purple text color */
     top: 25px; /* Position below the initials */
     opacity: 0; /* Start hidden */
@@ -566,4 +566,122 @@ button:hover {
         transform: translateX(100%);
         opacity: 0;
     }
+}
+
+/* History Button */
+.history-button {
+    position: fixed;
+    left: 7%;
+    top: 91%;
+    background-color: transparent; 
+    border: none; 
+    cursor: pointer; 
+    padding: 0; /* Remove any extra padding */
+    width: 30px; /* Set a square button size */
+    height: 30px; /* Set the same height as width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 1s ease; 
+    z-index: 3;
+}
+
+.history-button svg {
+    width: 30px; 
+    height: 30px; 
+}
+
+.history-button:hover {
+    background-color: transparent; /* Keep the background transparent on hover */
+}
+
+/* History Screen */
+.history-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, white 0%, white 97%, transparent 100%);
+    z-index: 4;
+    overflow-y: auto;
+    box-sizing: border-box;
+    opacity: 0; /* Start hidden */
+    transform: translateY(100%); /* Start off-screen */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth transition */
+}
+
+/* Show history screen */
+.history-screen.show {
+    opacity: 1; /* Fade in */
+    transform: translateY(0); /* Slide in */
+}
+
+/* Hide history screen */
+.history-screen.hide {
+    opacity: 0; /* Fade out */
+    transform: translateY(100%); /* Slide out */
+}
+
+/* White fade at the bottom */
+.white-fade{
+    position: sticky;
+    bottom: 0%; /* Stick to the bottom */
+    left: 0;
+    width: 100%;
+    height: 100px; /* Adjust height as needed */
+    background: linear-gradient(to top, white 0%, white 75%, transparent 100%);
+    pointer-events: none; /* Allow interactions to pass through */
+    z-index: 5; /* Ensure it is above other elements */
+}
+
+/* Back Button */
+.back-button {
+    position: sticky;
+    left: 5%;
+    top: 91%;
+    background-color: transparent; /* Transparent background */
+    border: none;
+    cursor: pointer;
+    padding: 0; /* Remove any extra padding */
+    width: 32px; /* Set a square button size */
+    height: 32px; /* Set the same height as width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 1s ease;
+    z-index: 6; /* Ensure it is above other elements */
+}
+
+.back-button svg {
+    width: 32px;
+    height: 32px;
+}
+
+.back-button:hover {
+    background-color: transparent; /* Keep the background transparent on hover */
+}
+
+.notes-history {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 100px;
+}
+
+/* Month Label */
+.month-label {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #4A0C15; /* Deep red/purple text color */
+    position: sticky;
+    z-index: 7;
+    padding-top: 15%;
+    padding-bottom: 10%;
+    top: -5%;
+    background: linear-gradient(to top, transparent 0%, white 25%, white 75%, transparent 100%);
+    overflow: visible;
 }
