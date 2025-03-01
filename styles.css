@@ -125,7 +125,17 @@ textarea {
 #form-container {
     transition: height 0.2s; /* Smooth transition for height changes */
     z-index: 2;
-    pointer-events: none; /* Disable interaction */
+    pointer-events: none;
+}
+
+/* Make the form non-interactable */
+#note-form {
+    pointer-events: none; /* Allow interactions to pass through */
+}
+
+/* Make all children of the form interactable */
+#note-form * {
+    pointer-events: auto; /* Allow interaction with form elements */
 }
 
 textarea:focus {
