@@ -30,6 +30,7 @@ export async function signUp(email, password, name) {
 }
 
 export async function signIn(email, password) {
+    console.log("Attempting to sign in with email:", email);
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;

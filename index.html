@@ -156,6 +156,17 @@
                 }
             });
 
+            document.getElementById("signin-form").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const email = document.getElementById("signin-email").value;
+                const password = document.getElementById("signin-password").value;
+                const user = await signIn(email, password);
+                if (!user) {
+                    console.error("Sign in failed.");
+                    // Optionally show an error message in the UI here
+                }
+            });
+
             document.getElementById("refresh-button").addEventListener("click", () => {
                 const note = document.querySelector(".note");
                 const heart = document.getElementById("heart-container");
